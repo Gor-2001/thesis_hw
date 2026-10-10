@@ -1,0 +1,14 @@
+# LaTeX build files
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+
+# Old plain-text draft
+*.txt
+
+.vscode/
+.DS_Store

@@ -1,0 +1,109 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+\newcommand{\xs}{x^\star}
+
+\title{Homework 12.10.26 -- Exercises 9 and 10}
+\author{Gor Melkumyan}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Exercise 9}
+
+Given $\mu I \preceq \nabla^2 f \preceq L I$, $0 < \mu \le L$, and
+$T_\gamma(x) := x - \gamma \nabla f(x)$.
+
+\subsection*{1)}
+\[
+  T_\gamma(x) - T_\gamma(y) = \int_0^1 \nabla T_\gamma\bigl(y + t(x-y)\bigr)(x-y)\,dt
+  \;\Rightarrow
+\]
+\begin{align*}
+  \norm{T_\gamma(x) - T_\gamma(y)}
+  &= \norm{\int_0^1 \nabla T_\gamma\bigl(y + t(x-y)\bigr)(x-y)\,dt}
+  \le \int_0^1 \norm{\nabla T_\gamma\bigl(y + t(x-y)\bigr)}\norm{x-y}\,dt \\
+  &\le \int_0^1 \sup_{z \in \R^d}\norm{\nabla T_\gamma(z)}\,dt \cdot \norm{x-y}
+  = \sup_{z \in \R^d}\norm{I - \gamma \nabla^2 f(z)}\,\norm{x-y}.
+\end{align*}
+Since $\mu I \preceq \nabla^2 f \preceq L I$, the eigenvalues $\lambda_i$ of the
+symmetric matrix $\nabla^2 f(z)$ lie in $[\mu, L]$, so
+\[
+  \norm{I - \gamma \nabla^2 f(z)} = \max_i |1 - \gamma\lambda_i|
+  \le \max\{|1-\gamma L|, |1-\mu\gamma|\}
+\]
+($|1-\gamma\lambda|$ is convex in $\lambda$, so its maximum on $[\mu, L]$ is at an endpoint)
+$\Rightarrow$
+\[
+  \norm{T_\gamma(x) - T_\gamma(y)} \le \norm{x-y}\cdot\max\{|1-\gamma L|, |1-\mu\gamma|\}.
+\]
+
+\subsection*{2)}
+If $\gamma = \frac{2}{\mu+L}$ $\Rightarrow$
+$|1-\gamma L| = |1-\mu\gamma| = \frac{L-\mu}{L+\mu}$.
+
+If $\gamma > \frac{2}{\mu+L}$ $\Rightarrow$ $L\gamma > \frac{2L}{\mu+L}$ $\Rightarrow$
+$1 - L\gamma < 1 - \frac{2L}{\mu+L} = \frac{\mu-L}{\mu+L} \le 0$ $\Rightarrow$
+$|1-L\gamma| > \frac{L-\mu}{L+\mu}$ $\Rightarrow$
+$\max\{|1-\gamma L|, |1-\mu\gamma|\} > \frac{L-\mu}{L+\mu}$.
+
+If $\gamma < \frac{2}{\mu+L}$ $\Rightarrow$ $\mu\gamma < \frac{2\mu}{\mu+L}$ $\Rightarrow$
+$1 - \mu\gamma > 1 - \frac{2\mu}{\mu+L} = \frac{L-\mu}{L+\mu} \ge 0$ $\Rightarrow$
+$|1-\mu\gamma| > \frac{L-\mu}{L+\mu}$ $\Rightarrow$
+$\max\{|1-\gamma L|, |1-\mu\gamma|\} > \frac{L-\mu}{L+\mu}$.
+
+$\Rightarrow$ $\gamma = \frac{2}{\mu+L}$ is optimal.
+
+\subsection*{3)}
+Since $\nabla f(\xs) = 0$, we have $T_\gamma(\xs) = \xs$, so with $\gamma = \frac{2}{\mu+L}$
+\[
+  \norm{x^{k+1} - \xs} = \norm{T_\gamma(x^k) - T_\gamma(\xs)}
+  \le \frac{L-\mu}{L+\mu}\norm{x^k - \xs}
+  \;\Rightarrow\;
+  \norm{x^k - \xs} \le \norm{x^0 - \xs}\cdot\left(\frac{L-\mu}{L+\mu}\right)^k .
+\]
+In Theorem 15, $\norm{x^k - \xs}^2 \le (1-\gamma\mu)^k\norm{x^0 - \xs}^2$, where
+$\gamma \le \frac{1}{L}$; the best choice is $\gamma = \frac{1}{L}$
+\[
+  \Rightarrow\; \norm{x^k - \xs}^2 \le \left(1 - \frac{\mu}{L}\right)^k\norm{x^0 - \xs}^2
+  = \left(\frac{L-\mu}{L}\right)^k\norm{x^0 - \xs}^2 .
+\]
+Squaring our bound, $\norm{x^k - \xs}^2 \le \left(\frac{L-\mu}{L+\mu}\right)^{2k}\norm{x^0 - \xs}^2$, and
+\[
+  \frac{L-\mu}{L} : \left(\frac{L-\mu}{L+\mu}\right)^2
+  = \frac{(L+\mu)^2}{L(L-\mu)} > 1
+  \quad (\mu < L),
+\]
+so the rate with $\gamma = \frac{2}{\mu+L}$ is better, by the factor
+$\frac{(L+\mu)^2}{L(L-\mu)}$ per iteration.
+
+\section*{Exercise 10}
+
+If $f$ is $L$-smooth and $\mu$-strongly convex, then by (18) and Exercise 8
+\[
+  \frac{1}{L}\norm{\nabla f(x^k) - \nabla f(\xs)}^2
+  \le 2D_f(x^k, \xs)
+  \le \frac{1}{\mu}\norm{\nabla f(x^k) - \nabla f(\xs)}^2 .
+\]
+Dividing by $\norm{\nabla f(x^k) - \nabla f(\xs)}^2$, (i) and (ii) are true:
+$\frac{1}{L} \le \gamma_k \le \frac{1}{\mu}$.
+
+For (iii): by (i), $1 - \gamma_k L \le 0$, so the last term of Lemma 14 cannot be
+dropped. Instead we stop the proof of Lemma 14 before using (25), with
+$r^k = x^k - \xs$:
+\[
+  \norm{r^{k+1}}^2 \le (1 - \gamma_k\mu)\norm{r^k}^2 - 2\gamma_k D_f(x^k, \xs)
+  + \gamma_k^2\norm{\nabla f(x^k) - \nabla f(\xs)}^2 .
+\]
+By the definition of $\gamma_k$,
+$\gamma_k^2\norm{\nabla f(x^k) - \nabla f(\xs)}^2 = 2\gamma_k D_f(x^k, \xs)$
+$\Rightarrow$
+\[
+  \norm{x^{k+1} - \xs}^2 \le (1 - \gamma_k\mu)\norm{x^k - \xs}^2 .
+\]
+
+\end{document}
