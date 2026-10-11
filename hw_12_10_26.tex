@@ -280,6 +280,57 @@ Now let $g(x) := f(x) - \frac{\mu}{2}\norm{x}^2$, so $\nabla g(x) = \nabla f(x) 
 is the same as $\ip{\nabla f(x) - \nabla f(y)}{x-y} \ge \mu\norm{x-y}^2$. So (iii) gives that
 $g$ is convex, which is the same as $f$ being $\mu$-convex.
 
+\section*{Exercise 15}
+
+If $f : \R^d \to \R$, $f \in C^1(\R^d)$ and $f$ is $\mu$-convex, then
+\begin{itemize}
+  \item[(ii)] $2D_f(x,y) \le \frac{1}{\mu}\norm{\nabla f(x) - \nabla f(y)}^2$ for all $x, y \in \R^d$
+  \item[(iii)] $\ip{\nabla f(x) - \nabla f(y)}{x-y} \le \frac{1}{\mu}\norm{\nabla f(x) - \nabla f(y)}^2$ for all $x, y \in \R^d$
+\end{itemize}
+
+\subsection*{(iii)}
+Let's assume for a moment that (ii) is true (proved below). Then we have
+\[
+  \ip{\nabla f(x) - \nabla f(y)}{x-y}
+  = f(x) - f(x) + f(y) - f(y) + \ip{\nabla f(x)}{y-x} + \ip{\nabla f(y)}{x-y}.
+\]
+Regrouping them,
+\begin{align*}
+  &= \bigl(f(x) - f(y) - \ip{\nabla f(y)}{x-y}\bigr) + \bigl(f(y) - f(x) - \ip{\nabla f(x)}{y-x}\bigr) \\
+  &= D_f(x,y) + D_f(y,x)
+  \le \frac{1}{2\mu}\norm{\nabla f(x) - \nabla f(y)}^2 + \frac{1}{2\mu}\norm{\nabla f(y) - \nabla f(x)}^2 \\
+  &= \frac{1}{\mu}\norm{\nabla f(x) - \nabla f(y)}^2 .
+\end{align*}
+
+\subsection*{(ii)}
+First of all let's define $a := \nabla f(x) - \nabla f(y)$, $b := x - y$. Then
+\[
+  0 \le \norm{\frac{a}{\sqrt{\mu}} - \sqrt{\mu}\, b}^2
+  = \frac{1}{\mu}\norm{a}^2 - 2\ip{a}{b} + \mu\norm{x-y}^2 ,
+\]
+which means
+\[
+  \frac{1}{\mu}\norm{\nabla f(x) - \nabla f(y)}^2
+  \ge 2\ip{\nabla f(x) - \nabla f(y)}{x-y} - \mu\norm{x-y}^2 . \tag{1}
+\]
+On the other hand (Proposition 10, (ii))
+\[
+  f(x) - f(y) - \ip{\nabla f(y)}{x-y} \ge \frac{\mu}{2}\norm{x-y}^2 ,
+\]
+which is the same as
+\[
+  f(y) - f(x) \le \ip{\nabla f(y)}{y-x} - \frac{\mu}{2}\norm{x-y}^2 ,
+\]
+also
+\[
+  f(y) - f(x) - \ip{\nabla f(x)}{y-x}
+  \le \ip{\nabla f(y) - \nabla f(x)}{y-x} - \frac{\mu}{2}\norm{x-y}^2
+  \overset{(1)}{\le} \frac{1}{2\mu}\norm{\nabla f(x) - \nabla f(y)}^2 ,
+\]
+so $D_f(y,x) \le \frac{1}{2\mu}\norm{\nabla f(x) - \nabla f(y)}^2$. As a result
+$2D_f(y,x) \le \frac{1}{\mu}\norm{\nabla f(x) - \nabla f(y)}^2$ for all $x, y \in \R^d$, and
+swapping the names of $x$ and $y$ gives (ii).
+
 \section*{Exercise 16}
 
 If $f : \R^d \to \R$, $f \in C^2(\R^d)$, then $f$ is $\mu$-convex iff
