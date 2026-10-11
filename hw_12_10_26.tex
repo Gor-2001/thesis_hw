@@ -5,8 +5,9 @@
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\norm}[1]{\left\| #1 \right\|}
 \newcommand{\xs}{x^\star}
+\newcommand{\ip}[2]{\left\langle #1, #2 \right\rangle}
 
-\title{Homework 12.10.26 -- Exercises 9 and 10}
+\title{Homework 12.10.26 -- Exercises 9--16}
 \author{Gor Melkumyan}
 \date{}
 
@@ -105,5 +106,194 @@ $\Rightarrow$
 \[
   \norm{x^{k+1} - \xs}^2 \le (1 - \gamma_k\mu)\norm{x^k - \xs}^2 .
 \]
+
+\section*{Exercise 11}
+
+$f : \R^d \to \R$ is differentiable. Then for all $x, y, z \in \R^d$
+\[
+  D_f(x,z) = D_f(x,y) + \ip{x-y}{\nabla f(y) - \nabla f(z)} + D_f(y,z). \tag{a}
+\]
+This is the same as
+\begin{align*}
+  f(x) - f(z) - \ip{\nabla f(z)}{x-z}
+  &= f(x) - f(y) - \ip{\nabla f(y)}{x-y} \\
+  &\quad + \ip{x-y}{\nabla f(y) - \nabla f(z)} + f(y) - f(z) - \ip{\nabla f(z)}{y-z}.
+\end{align*}
+Cancel the common terms on both sides ($f(\cdot)$):
+\[
+  -\ip{\nabla f(z)}{x-z}
+  = -\ip{\nabla f(y)}{x-y} - \ip{\nabla f(z)}{y-z} + \ip{x-y}{\nabla f(y) - \nabla f(z)}.
+\]
+Also $\ip{x-y}{\nabla f(y) - \nabla f(z)} = \ip{\nabla f(y)}{x-y} - \ip{\nabla f(z)}{x-y}$,
+so this is the same as
+\[
+  -\ip{\nabla f(z)}{x-z} = -\ip{\nabla f(z)}{y-z} - \ip{\nabla f(z)}{x-y}
+\]
+$\iff$
+\[
+  \ip{-\nabla f(z)}{x - z + z - y + y - x} = \ip{-\nabla f(z)}{0} = 0,
+\]
+which is true.
+
+\subsection*{(i)}
+If $x = z$, then $D_f(x,z) = f(x) - f(x) - \ip{\nabla f(x)}{x-x} = 0$. As a result we get
+\[
+  D_f(x,y) + D_f(y,x) = -\ip{x-y}{\nabla f(y) - \nabla f(x)} = \ip{\nabla f(x) - \nabla f(y)}{x-y}.
+\]
+
+\subsection*{(ii)}
+If $f(x) = \frac12\norm{x}^2$, then $\nabla f(v) = v$ $\Rightarrow$
+$\ip{x-y}{\nabla f(y) - \nabla f(z)} = \ip{x-y}{y-z}$. Also
+\begin{align*}
+  2D_f(x,y) &= \norm{x}^2 - \norm{y}^2 - 2\ip{y}{x-y}
+  = \ip{x}{x} - \ip{y}{x} - \ip{y}{x-y} \\
+  &= \ip{x-y}{x} - \ip{y}{x-y} = \ip{x-y}{x-y} = \norm{x-y}^2
+  \;\Rightarrow\; D_f(x,y) = \tfrac12\norm{x-y}^2 .
+\end{align*}
+As a result, for $f(x) = \frac12\norm{x}^2$, (a) becomes
+\[
+  \tfrac12\norm{x-z}^2 = \tfrac12\norm{x-y}^2 + \ip{x-y}{y-z} + \tfrac12\norm{y-z}^2 .
+\]
+
+\section*{Exercise 12}
+
+$f : \R^d \to \R$, $f \in C^2(\R^d)$. Then $f$ is convex if and only if $\nabla^2 f(x) \succeq 0$.
+
+\subsection*{1)}
+Assume $\nabla^2 f(x) \succeq 0$ for all $x$. Then
+\[
+  \ip{\nabla f(x) - \nabla f(y)}{x-y}
+  = \int_0^1 \ip{\nabla^2 f\bigl(y + t(x-y)\bigr)(x-y)}{x-y}\,dt .
+\]
+With $v := x - y$ we get $\int_0^1 \ip{\nabla^2 f(y + tv)\,v}{v}\,dt$, and because
+$\nabla^2 f \succeq 0$, $\ip{\nabla^2 f(y + tv)\,v}{v} \ge 0$. As a result
+$\ip{\nabla f(x) - \nabla f(y)}{x-y} \ge 0$, so $f$ is convex by Proposition 7
+((iii) $\Rightarrow$ (i)).
+
+\subsection*{2)}
+If $f$ is convex, then $f(x) \ge f(y) + \ip{\nabla f(y)}{x-y}$. Define $x := y + hv$,
+$h \in \R$, $v \in \R^d$. Then
+\[
+  f(y + hv) \ge f(y) + h\ip{\nabla f(y)}{v}.
+\]
+Also, because $f \in C^2(\R^d)$,
+\[
+  f(y + hv) = f(y) + h\ip{\nabla f(y)}{v} + \frac{h^2}{2}\ip{\nabla^2 f(y)\,v}{v} + o(h^2\norm{v}^2).
+\]
+As a result $\frac{h^2}{2}\ip{\nabla^2 f(y)\,v}{v} + o(h^2\norm{v}^2) \ge 0$ for all $h, v, y$.
+Dividing by $\frac{h^2}{2}$ and letting $h \to 0$:
+$\ip{\nabla^2 f(y)\,v}{v} \ge 0$ $\Rightarrow$ $\nabla^2 f(y) \succeq 0$ for all $y$.
+
+\section*{Exercise 13}
+
+$f : \R^d \to \R$ is convex, $x_i \in \R^d$, $\lambda_i \ge 0$ and $\sum_{i=1}^m \lambda_i = 1$.
+Then $f\bigl(\sum_{i=1}^m \lambda_i x_i\bigr) \le \sum_{i=1}^m \lambda_i f(x_i)$.
+
+\subsection*{1)}
+For $m = 2$, $\lambda_1 := \lambda$, then $\lambda_2 = 1 - \lambda$, and
+$f(\lambda x_1 + (1-\lambda)x_2) \le \lambda f(x_1) + (1-\lambda) f(x_2)$ by convexity.
+
+\subsection*{2)}
+If the inequality is true for $m = k$, we show it for $m = k+1$. If
+$\lambda_k + \lambda_{k+1} = 0$, then $\lambda_k = \lambda_{k+1} = 0$ and this is the case
+$m = k$. Otherwise let
+\[
+  \lambda'_k := \lambda_k + \lambda_{k+1}, \qquad
+  x'_k := \frac{\lambda_k x_k + \lambda_{k+1} x_{k+1}}{\lambda_k + \lambda_{k+1}},
+\]
+and $\lambda'_i := \lambda_i$, $x'_i := x_i$ for $i = 1, \dots, k-1$. Then
+\[
+  f\Bigl(\sum_{i=1}^{k+1} \lambda_i x_i\Bigr) = f\Bigl(\sum_{i=1}^{k} \lambda'_i x'_i\Bigr)
+  \le \sum_{i=1}^{k} \lambda'_i f(x'_i)
+  = \sum_{i=1}^{k-1} \lambda_i f(x_i)
+  + (\lambda_k + \lambda_{k+1})\, f\Bigl(\frac{\lambda_k x_k + \lambda_{k+1} x_{k+1}}{\lambda_k + \lambda_{k+1}}\Bigr). \tag{1}
+\]
+By the case $m = 2$,
+\[
+  f\Bigl(\frac{\lambda_k}{\lambda_k + \lambda_{k+1}} x_k + \frac{\lambda_{k+1}}{\lambda_k + \lambda_{k+1}} x_{k+1}\Bigr)
+  \le \frac{\lambda_k}{\lambda_k + \lambda_{k+1}} f(x_k) + \frac{\lambda_{k+1}}{\lambda_k + \lambda_{k+1}} f(x_{k+1}). \tag{2}
+\]
+From (1) and (2),
+\[
+  f\Bigl(\sum_{i=1}^{k+1} \lambda_i x_i\Bigr)
+  \le \sum_{i=1}^{k-1} \lambda_i f(x_i) + \lambda_k f(x_k) + \lambda_{k+1} f(x_{k+1})
+  = \sum_{i=1}^{k+1} \lambda_i f(x_i).
+\]
+
+\section*{Exercise 14}
+
+Let $f : \R^d \to \R$, $f \in C^1(\R^d)$. Then the following statements are equivalent:
+\begin{itemize}
+  \item[(i)] $f$ is $\mu$-convex
+  \item[(ii)] $\mu\norm{x-y}^2 \le 2D_f(x,y)$ for all $x, y \in \R^d$
+  \item[(iii)] $\mu\norm{x-y}^2 \le \ip{\nabla f(x) - \nabla f(y)}{x-y}$ for all $x, y \in \R^d$
+\end{itemize}
+
+\subsection*{(i) $\Rightarrow$ (ii)}
+$g(x) := f(x) - \frac{\mu}{2}\norm{x}^2$, then $g$ is convex, as a result (Proposition 7)
+\[
+  D_g(x,y) = g(x) - g(y) - \ip{\nabla g(y)}{x-y} \ge 0,
+\]
+which is the same as
+\[
+  f(x) - f(y) - \ip{\nabla f(y)}{x-y}
+  - \mu\Bigl(\frac{\norm{x}^2}{2} - \frac{\norm{y}^2}{2} - \ip{y}{x-y}\Bigr) \ge 0 .
+\]
+On the other hand $\frac{\norm{x}^2}{2} - \frac{\norm{y}^2}{2} - \ip{y}{x-y} = \frac12\norm{x-y}^2$.
+And finally we get
+\[
+  f(x) - f(y) - \ip{\nabla f(y)}{x-y} \ge \frac{\mu}{2}\norm{x-y}^2 .
+\]
+
+\subsection*{(ii) $\Rightarrow$ (iii)}
+\begin{align*}
+  & f(x) - f(y) - \ip{\nabla f(y)}{x-y} \ge \tfrac{\mu}{2}\norm{x-y}^2 \\
++\; & f(y) - f(x) - \ip{\nabla f(x)}{y-x} \ge \tfrac{\mu}{2}\norm{x-y}^2 \\
+=\; & -\ip{\nabla f(y)}{x-y} + \ip{\nabla f(x)}{x-y} \ge \mu\norm{x-y}^2,
+\end{align*}
+which is the same as $\ip{\nabla f(x) - \nabla f(y)}{x-y} \ge \mu\norm{x-y}^2$.
+
+\subsection*{(iii) $\Rightarrow$ (i)}
+First, if $\ip{\nabla g(x) - \nabla g(y)}{x-y} \ge 0$ for all $x, y$, then $g$ is convex:
+\[
+  g(y) = g(x) + \int_0^1 \ip{\nabla g\bigl(x + t(y-x)\bigr)}{y-x}\,dt .
+\]
+With $u := x + t(y-x)$, $t \in (0,1]$, we get
+$\ip{\nabla g(u) - \nabla g(x)}{u-x} \ge 0$.
+Expanding, $\ip{\nabla g(u)}{u-x} \ge \ip{\nabla g(x)}{u-x}$, and since $u - x = t(y-x)$,
+dividing by $t$:
+\[
+  \ip{\nabla g(u)}{y-x} \ge \ip{\nabla g(x)}{y-x}.
+\]
+Integrating over $t$,
+\[
+  \int_0^1 \ip{\nabla g\bigl(x + t(y-x)\bigr)}{y-x}\,dt \ge \int_0^1 \ip{\nabla g(x)}{y-x}\,dt
+  = \ip{\nabla g(x)}{y-x},
+\]
+as a result $g(y) - g(x) \ge \ip{\nabla g(x)}{y-x}$, so $g$ is convex by Proposition 7
+((ii) $\Rightarrow$ (i)).
+
+Now let $g(x) := f(x) - \frac{\mu}{2}\norm{x}^2$, so $\nabla g(x) = \nabla f(x) - \mu x$. Then
+\[
+  \ip{\nabla g(x) - \nabla g(y)}{x-y} = \ip{\nabla f(x) - \nabla f(y) - \mu(x-y)}{x-y} \ge 0
+\]
+is the same as $\ip{\nabla f(x) - \nabla f(y)}{x-y} \ge \mu\norm{x-y}^2$. So (iii) gives that
+$g$ is convex, which is the same as $f$ being $\mu$-convex.
+
+\section*{Exercise 16}
+
+If $f : \R^d \to \R$, $f \in C^2(\R^d)$, then $f$ is $\mu$-convex iff
+$\mu I \preceq \nabla^2 f(x)$ for all $x$.
+
+$g(x) := f(x) - \frac{\mu}{2}\norm{x}^2$, then $g \in C^2(\R^d)$ and
+$\nabla^2 g(x) = \nabla^2 f(x) - \mu I$.
+
+\subsection*{1)}
+If $\nabla^2 f(x) \succeq \mu I$, then $\nabla^2 g(x) \succeq 0$, then $g$ is convex
+(Exercise 12), then $f$ is $\mu$-convex.
+
+\subsection*{2)}
+If $f$ is $\mu$-convex, then $g$ is convex, then $\nabla^2 g(x) \succeq 0$ (Exercise 12),
+then $\nabla^2 f(x) \succeq \mu I$.
 
 \end{document}
