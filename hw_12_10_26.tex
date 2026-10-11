@@ -7,7 +7,7 @@
 \newcommand{\xs}{x^\star}
 \newcommand{\ip}[2]{\left\langle #1, #2 \right\rangle}
 
-\title{Homework 12.10.26 -- Exercises 9--16}
+\title{Homework 12.10.26 -- Exercises 9--18}
 \author{Gor Melkumyan}
 \date{}
 
@@ -295,5 +295,60 @@ If $\nabla^2 f(x) \succeq \mu I$, then $\nabla^2 g(x) \succeq 0$, then $g$ is co
 \subsection*{2)}
 If $f$ is $\mu$-convex, then $g$ is convex, then $\nabla^2 g(x) \succeq 0$ (Exercise 12),
 then $\nabla^2 f(x) \succeq \mu I$.
+
+\section*{Exercise 17}
+
+Let $f : \R^d \to \R$ be continuously differentiable. Then the following statements are
+equivalent:
+\begin{itemize}
+  \item[(i)] $f$ is $L$-smooth
+  \item[(ii)] $2D_f(x,y) \le L\norm{x-y}^2$ for all $x, y \in \R^d$
+  \item[(iii)] $\ip{\nabla f(x) - \nabla f(y)}{x-y} \le L\norm{x-y}^2$ for all $x, y \in \R^d$
+\end{itemize}
+Let $g(x) = \frac{L}{2}\norm{x}^2 - f(x)$, so $\nabla g(x) = Lx - \nabla f(x)$.
+
+\subsection*{(i) $\Rightarrow$ (ii)}
+If $f$ is $L$-smooth, then $g$ is convex, which means that (Proposition 7)
+\[
+  2D_g(x,y) = L\norm{x}^2 - L\norm{y}^2 - 2f(x) + 2f(y) + 2\ip{\nabla f(y)}{x-y}
+  - 2L\ip{y}{x-y} \ge 0,
+\]
+which means
+\[
+  2f(x) - 2f(y) - 2\ip{\nabla f(y)}{x-y} \le L\bigl(\norm{x}^2 - \norm{y}^2 - 2\ip{y}{x-y}\bigr)
+  = L\norm{x-y}^2,
+\]
+which is the same as $2D_f(x,y) \le L\norm{x-y}^2$.
+
+\subsection*{(ii) $\Rightarrow$ (iii)}
+By the computation above, $2D_g(x,y) = L\norm{x-y}^2 - 2D_f(x,y)$. If
+$2D_f(x,y) \le L\norm{x-y}^2$, then $D_g(x,y) \ge 0$, then (adding $D_g(x,y) \ge 0$ and
+$D_g(y,x) \ge 0$)
+\[
+  \ip{\nabla g(x) - \nabla g(y)}{x-y} \ge 0,
+\]
+which is the same as
+\[
+  L\ip{x-y}{x-y} - \ip{\nabla f(x) - \nabla f(y)}{x-y} \ge 0,
+\]
+and as a result $\ip{\nabla f(x) - \nabla f(y)}{x-y} \le L\norm{x-y}^2$.
+
+\subsection*{(iii) $\Rightarrow$ (i)}
+If $\ip{\nabla f(x) - \nabla f(y)}{x-y} \le L\norm{x-y}^2$, then
+$\ip{\nabla g(x) - \nabla g(y)}{x-y} \ge 0$, which means $g$ is convex
+(Proposition 7, (iii) $\Rightarrow$ (i)), which means that $f$ is $L$-smooth.
+
+\section*{Exercise 18}
+
+If $f : \R^d \to \R$, $f \in C^2(\R^d)$, then $f$ is $L$-smooth iff $\nabla^2 f(x) \preceq LI$.
+
+\subsection*{1)}
+If $f$ is $L$-smooth, then $g(x) := \frac{L}{2}\norm{x}^2 - f(x)$ is convex and
+$g \in C^2(\R^d)$, as a result (Exercise 12) $\nabla^2 g(x) = LI - \nabla^2 f(x) \succeq 0$,
+as a result $\nabla^2 f(x) \preceq LI$.
+
+\subsection*{2)}
+If $\nabla^2 f(x) \preceq LI$, then $\nabla^2 g(x) \succeq 0$, as a result $g$ is convex
+(Exercise 12), so $f$ is $L$-smooth.
 
 \end{document}
