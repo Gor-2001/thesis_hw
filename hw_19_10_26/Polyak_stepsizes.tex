@@ -1,0 +1,143 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{float}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+\newcommand{\inner}[2]{\left\langle #1, #2 \right\rangle}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\title{Different methods for gradient descent stepsize choice}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+Let us assume that we are given a function $f\colon \R^d \to \R$ which is $L$-smooth,
+$\mu$-strongly convex, and twice continuously differentiable, i.e., $f \in C^2(\R^d)$.
+As a reminder, Gradient Descent (GD) is an iterative method for finding the minimum
+of a function, and it can be described as follows.
+
+\begin{algorithm}[H]
+\caption{GD}
+\begin{algorithmic}[1]
+\State \textbf{Parameters:} stepsize $\gamma > 0$, starting point $x_0 \in \R^d$
+\For{$k = 0, 1, 2, \dots$}
+  \State Set $g_k = \nabla f(x_k)$
+  \State $x_{k+1} = x_k - \gamma \nabla f(x_k)$
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+Our aim is to choose the stepsize $\gamma$ so that GD converges ``faster''.
+The connection between the stepsize and the convergence speed can be described by the following lemma.
+
+\begin{lemma}\label{lem:one-step}
+Assume $f$ is $L$-smooth and $\mu$-strongly convex. Then the iterates of GD satisfy
+the following inequality for all $\gamma \geq 0$ and all $k \geq 0$:
+\begin{equation}\label{eq:lemma}
+\norm{x_{k+1}-x^*}^2 \leq (1-\gamma\mu)\norm{x_k-x^*}^2 - 2\gamma (1 - \gamma L)\, D_f(x_k, x^*),
+\end{equation}
+where $x^* \overset{\text{def}}{=} \argmin\limits_{x\in\R^d} f(x)$ and $D_f(x,y)$ is the Bregman
+divergence, defined as follows
+\[
+D_f(x, y) \overset{\text{def}}{=} f(x) - f(y) - \inner{\nabla f(y)}{x - y}
+\qquad \forall x, y \in \R^d.
+\]
+\end{lemma}
+
+Note that $D_f(x,y) \geq 0$ for every convex function $f$, and hence for every
+$\mu$-strongly convex function.
+
+\begin{proof}[Proof of Lemma~\ref{lem:one-step}]
+\begin{align*}
+\norm{x_{k+1}-x^*}^2
+&= \norm{\bigl(x_k - \gamma\nabla f(x_k)\bigr)-\bigl(x^* - \gamma\nabla f(x^*)\bigr)}^2 \\
+&= \norm{(x_k - x^*) - \gamma\bigl(\nabla f(x_k) -\nabla f(x^*)\bigr)}^2 \\
+&= \norm{x_k - x^*}^2 + \gamma^2\norm{\nabla f(x_k) -\nabla f(x^*)}^2
+   - 2\gamma\inner{x_k - x^*}{\nabla f(x_k) -\nabla f(x^*)}.
+\end{align*}
+From strong convexity we obtain
+\[
+\inner{x_k - x^*}{\nabla f(x_k) -\nabla f(x^*)} \geq D_f(x_k,x^*) + \frac{\mu}{2}\norm{x_k - x^*}^2.
+\]
+Also, from $L$-smoothness we have
+\[
+\norm{\nabla f(x_k) -\nabla f(x^*)}^2 \leq 2L\, D_f(x_k,x^*),
+\]
+and, as a result,
+\[
+\norm{x_{k+1}-x^*}^2 \leq (1-\gamma\mu)\norm{x_k-x^*}^2 - 2\gamma (1 - \gamma L)\, D_f(x_k, x^*),
+\]
+which finalizes the proof.
+\end{proof}
+
+As mentioned above, $D_f(x_k, x^*) \geq 0$. Hence, if we take $0 \leq \gamma \leq 1/L$,
+then $1 - \gamma L \geq 0$ and the last term in \eqref{eq:lemma} is non-positive.
+Dropping it and applying \eqref{eq:lemma} $k$ times, we obtain the following theorem.
+
+\begin{theorem}[Convergence of GD]\label{thm:gd}
+Assume $f$ is $L$-smooth and $\mu$-strongly convex. Then the iterates of GD
+with stepsize $0 \leq \gamma \leq 1/L$ satisfy
+\begin{equation}\label{eq:gd-rate}
+\norm{x_k-x^*}^2 \leq (1-\gamma\mu)^k\norm{x_0-x^*}^2.
+\end{equation}
+\end{theorem}
+
+To make this result more concrete,
+we may ask how many GD iterations it takes for the error to reach
+a certain target level $\varepsilon$. To answer this, one can start from inequality
+\eqref{eq:gd-rate} and show that with $\gamma = 1/L$, for every $k$ that satisfies
+\[
+k \geq \frac{L}{\mu}\log\frac{1}{\varepsilon}
+\]
+we have
+\[
+\norm{x_k-x^*}^2 \leq \varepsilon\norm{x_0-x^*}^2.
+\]
+
+What we can conclude is that if the function is $L$-smooth and
+$\mu$-strongly convex, then we can choose some $0 \leq \gamma \leq 1/L$ in \textbf{advance}
+for all iterations of GD, and we can guarantee that after a certain number of steps
+the squared distance between the current point and the minimizer is reduced by a factor
+of $\frac{1}{\varepsilon}$ compared to the initial point.
+
+But what if we are allowed to change the stepsize during the algorithm,
+that is, to pick a new stepsize $\gamma_k$ at each step $k$?
+If we are willing to do this ``extra'' work, and of course if we are able to do it,
+can we find stepsizes $\gamma_k$ that are better than a constant one? Or at least not worse, in the sense of the $\varepsilon$-guarantee
+from the previous part?
+
+It turns out that the answer is yes, and one such method is called the Polyak stepsize.
+
+Consider a variant of GD with Polyak stepsize, i.e., with the adaptive (i.e.,
+iteration-dependent) stepsize rule
+\[
+\gamma_k = \frac{2D_f(x_k,x^*)}{\norm{\nabla f(x_k) - \nabla f(x^*)}^2},
+\]
+where we assume that $\nabla f(x_k) \neq \nabla f(x^*)$. This is a very natural assumption:
+since $\nabla f(x^*) = 0$ and the minimizer of a strongly convex function is unique, so
+$\nabla f(x_k) = \nabla f(x^*)$ would mean that $x_k = x^*$, i.e., we have already found the minimum.
+
+\begin{enumerate}
+  \item[(i)] From $L$-smoothness it can be obtained that $\gamma_k \geq 1/L$. That is,
+  the Polyak stepsize is always at least as large as the largest constant stepsize
+  $\gamma = 1/L$ allowed by Theorem~\ref{thm:gd}.
+  \item[(ii)] From $\mu$-strong convexity it can be obtained that $\gamma_k \leq 1/\mu$.
+  \item[(iii)] Finally, it can be shown that after one step of GD with Polyak stepsize we have
+  \[
+  \norm{x_{k+1}-x^*}^2 \leq (1-\gamma_k\mu)\norm{x_k-x^*}^2.
+  \]
+\end{enumerate}
+
+\end{document}
