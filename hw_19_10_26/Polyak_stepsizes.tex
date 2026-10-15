@@ -140,4 +140,38 @@ $\nabla f(x_k) = \nabla f(x^*)$ would mean that $x_k = x^*$, i.e., we have alrea
   \]
 \end{enumerate}
 
+Indeed, let us start from the GD step $x_{k+1} = x_k - \gamma_k\nabla f(x_k)$.
+Since $\nabla f(x^*) = 0$, we can subtract the zero term $\gamma_k\nabla f(x^*)$
+without changing anything, and then group the terms:
+\begin{align*}
+\norm{x_{k+1}-x^*}^2
+&= \norm{\bigl(x_k - \gamma_k\nabla f(x_k)\bigr)-\bigl(x^* - \gamma_k\nabla f(x^*)\bigr)}^2
+ = \norm{(x_k - x^*) - \gamma_k\bigl(\nabla f(x_k) -\nabla f(x^*)\bigr)}^2.
+\end{align*}
+Expanding the square and taking $\gamma_k$ out of the last two terms, we obtain
+\begin{align*}
+\norm{x_{k+1}-x^*}^2
+&= \norm{x_k - x^*}^2 + \gamma_k\Bigl(\gamma_k\norm{\nabla f(x_k) -\nabla f(x^*)}^2
+   - 2\inner{x_k - x^*}{\nabla f(x_k) -\nabla f(x^*)}\Bigr).
+\end{align*}
+Now we bound the inner product from below. By $\mu$-strong convexity,
+\[
+\inner{x_k - x^*}{\nabla f(x_k) -\nabla f(x^*)} \geq D_f(x_k,x^*) + \frac{\mu}{2}\norm{x_k - x^*}^2.
+\]
+The inner product enters with a minus sign and $\gamma_k \geq 0$, so replacing it by this
+lower bound can only increase the right-hand side. Moreover, in front of the squared gradient
+norm we substitute the definition of $\gamma_k$. This gives
+\begin{align*}
+\norm{x_{k+1}-x^*}^2 \leq \norm{x_k - x^*}^2 + \gamma_k\Biggl(\frac{2D_f(x_k,x^*)}{\norm{\nabla f(x_k) -\nabla f(x^*)}^2}
+   \cdot\norm{\nabla f(x_k) -\nabla f(x^*)}^2  - 2D_f(x_k,x^*) - \mu\norm{x_k - x^*}^2\Biggr).
+\end{align*}
+Here the squared gradient norms cancel, so the first term in the brackets is just
+$2D_f(x_k,x^*)$, and it cancels with $-2D_f(x_k,x^*)$. Only the term
+$-\mu\norm{x_k - x^*}^2$ remains, and therefore
+\[
+\norm{x_{k+1}-x^*}^2 \leq \norm{x_k - x^*}^2 - \gamma_k\mu\norm{x_k - x^*}^2
+= (1-\gamma_k\mu)\norm{x_k - x^*}^2,
+\]
+which is exactly the inequality in (iii).
+
 \end{document}
