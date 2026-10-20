@@ -1,0 +1,133 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+\newcommand{\ip}[2]{\left\langle #1, #2 \right\rangle}
+
+\title{Homework 19.10.26 -- Exercises 20, 24, 25}
+\author{Gor Melkumyan}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Exercise 20}
+
+Given that $f$ has $L$-Lipschitz gradient, i.e.,
+\[
+  \norm{\nabla f(x) - \nabla f(y)} \le L\norm{x-y} \qquad \forall x, y \in \R^d .
+\]
+Show that
+\[
+  -\frac{L}{2}\norm{x-y}^2 \le D_f(x,y) \le \frac{L}{2}\norm{x-y}^2 \qquad \forall x, y \in \R^d .
+\]
+
+\subsection*{Proof}
+It is enough to show that $|D_f(x,y)| \le \frac{L}{2}\norm{x-y}^2$.
+Let $z := y + t(x-y)$, so that $x - y = \frac{z-y}{t}$. Then
+\begin{align*}
+  |D_f(x,y)|
+  &= \bigl|f(x) - f(y) - \ip{\nabla f(y)}{x-y}\bigr|
+  \\
+  &= \left|\int_0^1 \ip{\nabla f\bigl(y + t(x-y)\bigr)}{x-y}\,dt - \ip{\nabla f(y)}{x-y}\right| \\
+  &= \left|\int_0^1 \ip{\nabla f(z) - \nabla f(y)}{z-y}\cdot\frac{1}{t}\,dt\right|
+  \le \int_0^1 \frac{1}{t}\,\bigl|\ip{\nabla f(z) - \nabla f(y)}{z-y}\bigr|\,dt .
+\end{align*}
+By Cauchy--Schwarz and then by the $L$-Lipschitz gradient assumption,
+\begin{align*}
+  |D_f(x,y)|
+  &\le \int_0^1 \frac{1}{t}\norm{z-y}\norm{\nabla f(z) - \nabla f(y)}\,dt
+  \le \int_0^1 \frac{L}{t}\norm{z-y}^2\,dt
+  = \int_0^1 \frac{L}{t}\ip{z-y}{z-y}\,dt \\
+  &= \int_0^1 L\ip{x-y}{x-y}\,t\,dt
+  = \frac{L}{2}\norm{x-y}^2,
+\end{align*}
+where we used $z - y = t(x-y)$.
+
+\section*{Exercise 24}
+
+For all $a, b \in \R^d$ and $t > 0$ the following inequalities hold:
+\begin{align*}
+  &1)\quad \ip{a}{b} \le \frac{\norm{a}^2}{2t} + \frac{t\norm{b}^2}{2}, \\
+  &2)\quad \norm{a+b}^2 \le 2\norm{a}^2 + 2\norm{b}^2, \\
+  &3)\quad \frac{1}{2}\norm{a}^2 - \norm{b}^2 \le \norm{a+b}^2 .
+\end{align*}
+
+\subsection*{Proof of 1)}
+Let $a' = \frac{a}{\sqrt{t}}$, $b' = b\sqrt{t}$, i.e., $a = a'\sqrt{t}$, $b = \frac{b'}{\sqrt{t}}$. Then
+\[
+  \ip{a}{b} = \ip{a'}{b'}, \qquad
+  \frac{\norm{a}^2}{2t} = \frac{\norm{a'}^2}{2}, \qquad
+  \frac{t\norm{b}^2}{2} = \frac{\norm{b'}^2}{2}.
+\]
+As a result, we only have to prove
+\[
+  2\ip{a'}{b'} \le \norm{a'}^2 + \norm{b'}^2,
+\]
+which is equivalent to $\norm{a'-b'}^2 \ge 0$, so it is true.
+
+\subsection*{Proof of 2)}
+Using $\norm{a-b}^2 \ge 0$ we get
+\[
+  \norm{a}^2 + \norm{b}^2 - 2\ip{a}{b} \ge 0 .
+\]
+Adding $\norm{a}^2 + \norm{b}^2$ to both sides:
+\[
+  2\norm{a}^2 + 2\norm{b}^2 - 2\ip{a}{b} \ge \norm{a}^2 + \norm{b}^2 .
+\]
+Adding $2\ip{a}{b}$ and regrouping:
+\[
+  2\norm{a}^2 + 2\norm{b}^2 \ge \norm{a}^2 + 2\ip{a}{b} + \norm{b}^2 = \norm{a+b}^2 .
+\]
+
+\subsection*{Proof of 3)}
+3) is the same as
+\[
+  \norm{a}^2 \le 2\norm{a+b}^2 + 2\norm{b}^2 .
+\]
+Setting $a := a' + b'$, $b := -b'$ (so that $a + b = a'$) we get
+\[
+  \norm{a'+b'}^2 \le 2\norm{a'}^2 + 2\norm{b'}^2,
+\]
+which is the same as 2).
+
+\section*{Exercise 25}
+
+For a random vector $X \in \R^d$ (with finite second moment) and any $c \in \R^d$,
+\[
+  \E\bigl[\norm{X - \E[X]}^2\bigr] = \E\bigl[\norm{X - c}^2\bigr] - \norm{\E[X] - c}^2 .
+\]
+
+\subsection*{Proof}
+\begin{align*}
+  \E\bigl[\norm{X - \E[X]}^2\bigr]
+  &= \E\bigl[\norm{(X - c) - (\E[X] - c)}^2\bigr] \\
+  &= \E\bigl[\norm{X - c}^2\bigr] + \E\bigl[\norm{\E[X] - c}^2\bigr]
+     - 2\,\E\bigl[\ip{X-c}{\E[X]-c}\bigr].
+\end{align*}
+On the other hand, $\norm{\E[X] - c}^2$ is a number, so its expectation is the same number:
+\[
+  \E\bigl[\norm{\E[X] - c}^2\bigr] = \norm{\E[X] - c}^2 .
+\]
+So we get
+\[
+  \E\bigl[\norm{X - \E[X]}^2\bigr]
+  = \E\bigl[\norm{X - c}^2\bigr] - \norm{\E[X] - c}^2
+    - 2\Bigl(\E\bigl[\ip{X-c}{\E[X]-c}\bigr] - \norm{\E[X] - c}^2\Bigr).
+\]
+Also
+\begin{align*}
+  \E\bigl[\ip{X-c}{\E[X]-c}\bigr]
+  &= \E\bigl[\ip{X}{\E[X]}\bigr] - \ip{c}{\E[X]} - \ip{c}{\E[X]} + \norm{c}^2 \\
+  &= \norm{\E[X]}^2 - 2\ip{c}{\E[X]} + \norm{c}^2 = \norm{\E[X] - c}^2,
+\end{align*}
+which means
+\[
+  -2\Bigl(\E\bigl[\ip{X-c}{\E[X]-c}\bigr] - \norm{\E[X] - c}^2\Bigr) = 0,
+\]
+which proves the identity.
+
+\end{document}
