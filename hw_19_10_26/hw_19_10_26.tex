@@ -7,7 +7,7 @@
 \newcommand{\norm}[1]{\left\| #1 \right\|}
 \newcommand{\ip}[2]{\left\langle #1, #2 \right\rangle}
 
-\title{Homework 19.10.26 -- Exercises 20, 24, 25}
+\title{Homework 19.10.26 -- Exercises 20, 22--26}
 \author{Gor Melkumyan}
 \date{}
 
@@ -46,6 +46,99 @@ By Cauchy--Schwarz and then by the $L$-Lipschitz gradient assumption,
   = \frac{L}{2}\norm{x-y}^2,
 \end{align*}
 where we used $z - y = t(x-y)$.
+
+\section*{Exercise 22}
+
+Let $T_\gamma(x) := x - \gamma\nabla f(x)$. Show that if $f$ has $L$-Lipschitz gradient, then
+for all $x \in \R^d$ and $\gamma \ge 0$
+\[
+  \gamma\left(1 - \frac{\gamma L}{2}\right)\norm{\nabla f(x)}^2
+  \le f(x) - f\bigl(T_\gamma(x)\bigr)
+  \le \gamma\left(1 + \frac{3\gamma L}{2}\right)\norm{\nabla f(x)}^2 .
+\]
+
+\subsection*{Proof}
+Let $x_t := x - t\gamma\nabla f(x)$. From the Fundamental Theorem of Calculus we get
+\begin{align*}
+  f(x) - f\bigl(T_\gamma(x)\bigr)
+  &= \int_0^1 \ip{\nabla f\Bigl(x - t\bigl(x - (x - \gamma\nabla f(x))\bigr)\Bigr)}{x - \bigl(x - \gamma\nabla f(x)\bigr)}\,dt \\
+  &= \int_0^1 \ip{\nabla f\bigl(x - t\gamma\nabla f(x)\bigr)}{\gamma\nabla f(x)}\,dt
+  = \gamma\int_0^1 \ip{\nabla f(x)}{\nabla f(x_t)}\,dt .
+\end{align*}
+Also we have
+\[
+  \ip{\nabla f(x)}{\nabla f(x_t)} = \norm{\nabla f(x)}^2 + \ip{\nabla f(x)}{\nabla f(x_t) - \nabla f(x)} .
+\]
+As a result,
+\[
+  f(x) - f\bigl(T_\gamma(x)\bigr)
+  = \gamma\norm{\nabla f(x)}^2 + \gamma\int_0^1 \ip{\nabla f(x)}{\nabla f(x_t) - \nabla f(x)}\,dt .
+\]
+So if we prove that
+\[
+  -\frac{\gamma L}{2}\norm{\nabla f(x)}^2
+  \le \int_0^1 \ip{\nabla f(x)}{\nabla f(x_t) - \nabla f(x)}\,dt
+  \le \frac{3\gamma L}{2}\norm{\nabla f(x)}^2,
+\]
+then the statement follows.
+On the other hand, by Cauchy--Schwarz and the $L$-Lipschitz gradient,
+\begin{align*}
+  \bigl|\ip{\nabla f(x)}{\nabla f(x_t) - \nabla f(x)}\bigr|
+  &\le \norm{\nabla f(x)}\cdot\norm{\nabla f(x_t) - \nabla f(x)}
+  \le L\norm{\nabla f(x)}\cdot\norm{x_t - x} \\
+  &= L\norm{\nabla f(x)}\cdot\norm{t\gamma\nabla f(x)}
+  = L\gamma t\norm{\nabla f(x)}^2 .
+\end{align*}
+As a result,
+\[
+  \left|\int_0^1 \ip{\nabla f(x)}{\nabla f(x_t) - \nabla f(x)}\,dt\right|
+  \le L\gamma\norm{\nabla f(x)}^2\int_0^1 t\,dt
+  = \frac{L\gamma}{2}\norm{\nabla f(x)}^2,
+\]
+which proves the statement, because $\frac{L\gamma}{2} \le \frac{3L\gamma}{2}$.
+
+\section*{Exercise 23}
+
+Find an upper bound for $\norm{x^{k+1} - x^*}^2$ using Proposition 20, i.e.: if
+$f\colon \R^d \to \R$, $f \in C^1(\R^d)$, is also $\mu$-convex and $L$-smooth, then
+\[
+  \mu\norm{x-y}^2 + \frac{1}{L}\norm{\nabla f(x) - \nabla f(y)}^2
+  \le \left(1 + \frac{\mu}{L}\right)\ip{\nabla f(x) - \nabla f(y)}{x-y}
+  \qquad \forall x, y \in \R^d .
+\]
+
+\subsection*{Proof}
+\begin{align*}
+  \norm{x^{k+1} - x^*}^2
+  &= \norm{(x^k - x^*) - \gamma\bigl(\nabla f(x^k) - \nabla f(x^*)\bigr)}^2 \\
+  &= \norm{x^k - x^*}^2 + \gamma^2\norm{\nabla f(x^k) - \nabla f(x^*)}^2
+     - 2\gamma\ip{\nabla f(x^k) - \nabla f(x^*)}{x^k - x^*} .
+\end{align*}
+On the other hand, multiplying Proposition 20 by $\frac{L}{L+\mu}$,
+\[
+  \ip{\nabla f(x^k) - \nabla f(x^*)}{x^k - x^*}
+  \ge \frac{L\mu}{L+\mu}\norm{x^k - x^*}^2 + \frac{1}{L+\mu}\norm{\nabla f(x^k) - \nabla f(x^*)}^2 .
+\]
+Multiplying by $-2\gamma$:
+\[
+  -2\gamma\ip{\nabla f(x^k) - \nabla f(x^*)}{x^k - x^*}
+  \le -\frac{2L\mu\gamma}{L+\mu}\norm{x^k - x^*}^2 - \frac{2\gamma}{L+\mu}\norm{\nabla f(x^k) - \nabla f(x^*)}^2 .
+\]
+As a result,
+\[
+  \norm{x^{k+1} - x^*}^2
+  \le \left(1 - \frac{2L\mu\gamma}{L+\mu}\right)\norm{x^k - x^*}^2
+  - \gamma\left(\frac{2}{L+\mu} - \gamma\right)\norm{\nabla f(x^k) - \nabla f(x^*)}^2 .
+\]
+In particular, for $0 \le \gamma \le \frac{2}{L+\mu}$ the last term is non-positive, and we get
+\[
+  \norm{x^{k+1} - x^*}^2 \le \left(1 - \frac{2L\mu\gamma}{L+\mu}\right)\norm{x^k - x^*}^2 .
+\]
+Note that
+\[
+  1 - \frac{2L\mu\gamma}{L+\mu} \le 1 - \mu\gamma,
+  \qquad \text{because} \qquad \frac{2L}{L+\mu} \ge 1 .
+\]
 
 \section*{Exercise 24}
 
@@ -129,5 +222,56 @@ which means
   -2\Bigl(\E\bigl[\ip{X-c}{\E[X]-c}\bigr] - \norm{\E[X] - c}^2\Bigr) = 0,
 \]
 which proves the identity.
+
+
+\section*{Exercise 26}
+
+Prove that for a random vector $X \in \R^d$ and any $t > 0$ we have
+\[
+  \mathrm{Prob}\bigl(\norm{X - \E[X]} \ge t\bigr) \le \frac{\mathrm{Var}[X]}{t^2} .
+\]
+Below $\mu := \E[X]$ and $\sigma^2 := \mathrm{Var}[X] = \E\bigl[\norm{X - \mu}^2\bigr]$.
+
+\subsection*{Proof 1 (from scratch)}
+Replacing $t$ by $t\sigma$ (for $\sigma > 0$),
+\[
+  \mathrm{Prob}\bigl(\norm{X - \mu} \ge t\bigr) \le \frac{\sigma^2}{t^2}
+  \iff
+  \mathrm{Prob}\bigl(\norm{X - \mu} \ge t\sigma\bigr) \le \frac{1}{t^2} .
+\]
+By the law of total expectation,
+\begin{align*}
+  \sigma^2 = \E\bigl[\norm{X - \mu}^2\bigr]
+  &= \E\bigl[\norm{X - \mu}^2 \,\big|\, \norm{X - \mu} \ge t\sigma\bigr]\,
+     \mathrm{Prob}\bigl(\norm{X - \mu} \ge t\sigma\bigr) \\
+  &\quad + \E\bigl[\norm{X - \mu}^2 \,\big|\, \norm{X - \mu} < t\sigma\bigr]\,
+     \mathrm{Prob}\bigl(\norm{X - \mu} < t\sigma\bigr) \\
+  &\ge (t\sigma)^2\,\mathrm{Prob}\bigl(\norm{X - \mu} \ge t\sigma\bigr)
+     + 0\cdot\mathrm{Prob}\bigl(\norm{X - \mu} < t\sigma\bigr) \\
+  &= (t\sigma)^2\,\mathrm{Prob}\bigl(\norm{X - \mu} \ge t\sigma\bigr).
+\end{align*}
+As a result, $(t\sigma)^2\,\mathrm{Prob}\bigl(\norm{X - \mu} \ge t\sigma\bigr) \le \sigma^2$, which is the same as
+\[
+  \mathrm{Prob}\bigl(\norm{X - \mu} \ge t\sigma\bigr) \le \frac{1}{t^2} .
+\]
+
+\subsection*{Proof 2 (using Markov's inequality)}
+Markov's inequality: for a non-negative random variable $Z$ and $s > 0$,
+\[
+  \mathrm{Prob}(Z \ge s) \le \frac{\E[Z]}{s} .
+\]
+Let $Z := \norm{X - \mu}^2$, where $\mu = \E[X]$. Then
+\[
+  \mathrm{Prob}\bigl(\norm{X - \mu}^2 \ge s\bigr) \le \frac{\E\bigl[\norm{X - \mu}^2\bigr]}{s},
+\]
+which is the same as
+\[
+  \mathrm{Prob}\bigl(\norm{X - \mu} \ge \sqrt{s}\bigr) \le \frac{\mathrm{Var}[X]}{s} .
+\]
+Substituting $s = t^2$ we get
+\[
+  \mathrm{Prob}\bigl(\norm{X - \mu} \ge t\bigr) \le \frac{\mathrm{Var}[X]}{t^2},
+\]
+which proves the inequality.
 
 \end{document}
