@@ -105,12 +105,16 @@ we have
 \[
 \norm{x_k-x^*}^2 \leq \varepsilon\norm{x_0-x^*}^2.
 \]
+\qed
+\\
 
 What we can conclude is that if the function is $L$-smooth and
 $\mu$-strongly convex, then we can choose some $0 \leq \gamma \leq 1/L$ in \textbf{advance}
 for all iterations of GD, and we can guarantee that after a certain number of steps
 the squared distance between the current point and the minimizer is reduced by a factor
 of $\frac{1}{\varepsilon}$ compared to the initial point.
+
+\subsection{Polyak stepsizes}
 
 But what if we are allowed to change the stepsize during the algorithm,
 that is, to pick a new stepsize $\gamma_k$ at each step $k$?
@@ -134,11 +138,15 @@ $\nabla f(x_k) = \nabla f(x^*)$ would mean that $x_k = x^*$, i.e., we have alrea
   the Polyak stepsize is always at least as large as the largest constant stepsize
   $\gamma = 1/L$ allowed by Theorem~\ref{thm:gd}.
   \item[(ii)] From $\mu$-strong convexity it can be obtained that $\gamma_k \leq 1/\mu$.
-  \item[(iii)] Finally, it can be shown that after one step of GD with Polyak stepsize we have
+\end{enumerate}
+
+\begin{theorem}[Polyak]
+Finally, it can be shown that after one step of GD with Polyak stepsize we have
   \[
   \norm{x_{k+1}-x^*}^2 \leq (1-\gamma_k\mu)\norm{x_k-x^*}^2.
   \]
-\end{enumerate}
+
+\end{theorem}
 
 Indeed, let us start from the GD step $x_{k+1} = x_k - \gamma_k\nabla f(x_k)$.
 Since $\nabla f(x^*) = 0$, we can subtract the zero term $\gamma_k\nabla f(x^*)$
@@ -162,8 +170,8 @@ The inner product enters with a minus sign and $\gamma_k \geq 0$, so replacing i
 lower bound can only increase the right-hand side. Moreover, in front of the squared gradient
 norm we substitute the definition of $\gamma_k$. This gives
 \begin{align*}
-\norm{x_{k+1}-x^*}^2 \leq \norm{x_k - x^*}^2 + \gamma_k\Biggl(\frac{2D_f(x_k,x^*)}{\norm{\nabla f(x_k) -\nabla f(x^*)}^2}
-   \cdot\norm{\nabla f(x_k) -\nabla f(x^*)}^2  - 2D_f(x_k,x^*) - \mu\norm{x_k - x^*}^2\Biggr).
+\norm{x_{k+1}-x^*}^2 \leq 
+\norm{x_k - x^*}^2 + \gamma_k\Biggl(\frac{2D_f(x_k,x^*)}{\norm{\nabla f(x_k) -\nabla f(x^*)}^2} \cdot\norm{\nabla f(x_k) -\nabla f(x^*)}^2 - 2D_f(x_k,x^*) - \mu\norm{x_k - x^*}^2\Biggr).
 \end{align*}
 Here the squared gradient norms cancel, so the first term in the brackets is just
 $2D_f(x_k,x^*)$, and it cancels with $-2D_f(x_k,x^*)$. Only the term
@@ -173,5 +181,8 @@ $-\mu\norm{x_k - x^*}^2$ remains, and therefore
 = (1-\gamma_k\mu)\norm{x_k - x^*}^2,
 \]
 which is exactly the inequality in (iii).
+\begin{proof}
+    
+\end{proof}
 
 \end{document}
