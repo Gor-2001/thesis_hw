@@ -1,0 +1,86 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+\newcommand{\ip}[2]{\left\langle #1, #2 \right\rangle}
+\newcommand{\xs}{x^\star}
+
+\title{Homework 28.10.26 -- Exercises 29--30}
+\author{Gor Melkumyan}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Exercise 29}
+
+Let $f = \frac{1}{n}\sum_{i=1}^n f_i$, and assume that each $f_i$ is convex and $L_i$-smooth.
+Define a gradient estimator by setting $g(x) = \nabla f_i(x)$, where the index $i$ is chosen
+uniformly at random. Establish a bound of the form
+\[
+  G(x,y) \le 2A\,D_f(x,y) + C,
+\]
+and specify what $A$ and $C$ are. Use this to derive a convergence result for SGD using this
+gradient estimator.
+
+\subsection*{Proof}
+By the definition of $G(x,y)$ and the fact that $i \sim \mathrm{Uniform}(\{1,2,\dots,n\})$,
+\[
+  G(x,y) = \E_i\bigl[\norm{g(x) - \nabla f(y)}^2\bigr]
+  = \frac{1}{n}\sum_{i=1}^n \norm{\nabla f_i(x) - \nabla f(y)}^2 .
+\]
+Using $\norm{a+b}^2 \le 2\norm{a}^2 + 2\norm{b}^2$ (Exercise 24) we get
+\begin{align*}
+  G(x,y)
+  &= \frac{1}{n}\sum_{i=1}^n \norm{\bigl(\nabla f_i(x) - \nabla f_i(y)\bigr) + \bigl(\nabla f_i(y) - \nabla f(y)\bigr)}^2 \\
+  &\le \frac{2}{n}\left(\sum_{i=1}^n \norm{\nabla f_i(x) - \nabla f_i(y)}^2
+     + \sum_{i=1}^n \norm{\nabla f_i(y) - \nabla f(y)}^2\right).
+\end{align*}
+Since each $f_i$ is convex and $L_i$-smooth, we have
+$\norm{\nabla f_i(x) - \nabla f_i(y)}^2 \le 2L_i\,D_{f_i}(x,y)$. Hence, with
+$L_{\max} := \max_i L_i$,
+\begin{align*}
+  G(x,y)
+  &\le \frac{4}{n}\sum_{i=1}^n L_i\,D_{f_i}(x,y) + \frac{2}{n}\sum_{i=1}^n \norm{\nabla f_i(y) - \nabla f(y)}^2 \\
+  &\le 4L_{\max}\cdot\frac{1}{n}\sum_{i=1}^n D_{f_i}(x,y) + \frac{2}{n}\sum_{i=1}^n \norm{\nabla f_i(y) - \nabla f(y)}^2 \\
+  &= 2\,(2L_{\max})\,D_f(x,y) + C(y),
+\end{align*}
+where we used $D_{f_i}(x,y) \ge 0$ (convexity of $f_i$), the linearity
+$D_f = \frac{1}{n}\sum_{i=1}^n D_{f_i}$, and
+\[
+  C(y) := \frac{2}{n}\sum_{i=1}^n \norm{\nabla f_i(y) - \nabla f(y)}^2 = 2\,\mathrm{Var}\bigl[g(y)\bigr].
+\]
+As a result, we get
+\[
+  A = 2L_{\max}, \qquad C = C(y) = \frac{2}{n}\sum_{i=1}^n \norm{\nabla f_i(y) - \nabla f(y)}^2 .
+\]
+
+\subsection*{Convergence of SGD}
+First of all, it is easy to notice that the estimator is unbiased:
+\[
+  \E_i\bigl[g(x)\bigr] = \frac{1}{n}\sum_{i=1}^n \nabla f_i(x) = \nabla f(x).
+\]
+Abd if we take $x = x^k$ and $y = \xs$ in the bound above, and use the fact that 
+$\nabla f(\xs) = 0$, then we get
+\[
+  G^k = \E\bigl[\norm{g^k - \nabla f(\xs)}^2 \,\big|\, x^k\bigr]
+  \le 2(2L_{\max})\,D_f(x^k,\xs) + \frac{2}{n}\sum_{i=1}^n \norm{\nabla f_i(\xs)}^2,
+\]
+i.e.\ the AC assumption holds with
+\[
+  A = 2L_{\max}, \qquad C = 2\sigma_\star^2, \qquad
+  \sigma_\star^2 := \frac{1}{n}\sum_{i=1}^n \norm{\nabla f_i(\xs)}^2 .
+\]
+If in addition $f$ is $\mu$-convex, Theorem 33 gives that for every stepsize
+$0 < \gamma \le \frac{1}{2L_{\max}}$ the iterates of SGD satisfy
+\[
+  \E\bigl[\norm{x^k - \xs}^2\bigr] \le (1-\gamma\mu)^k\norm{x^0 - \xs}^2 + \frac{2\gamma\sigma_\star^2}{\mu} .
+\]
+So SGD converges linearly up to a neighbourhood of radius $\frac{2\gamma\sigma_\star^2}{\mu}$,
+which shrinks as $\gamma \to 0$. In particular, if $\nabla f_i(\xs) = 0$ for all $i$
+(interpolation), then $C = 0$ and SGD converges linearly to $\xs$.
+
+\end{document}
