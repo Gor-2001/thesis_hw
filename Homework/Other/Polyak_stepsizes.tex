@@ -140,15 +140,18 @@ $\nabla f(x_k) = \nabla f(x^*)$ would mean that $x_k = x^*$, i.e., we have alrea
   \item[(ii)] From $\mu$-strong convexity it can be obtained that $\gamma_k \leq 1/\mu$.
 \end{enumerate}
 
-\begin{theorem}[Polyak]
-Finally, it can be shown that after one step of GD with Polyak stepsize we have
-  \[
-  \norm{x_{k+1}-x^*}^2 \leq (1-\gamma_k\mu)\norm{x_k-x^*}^2.
-  \]
+Finally, the Polyak stepsize gives the following one-step guarantee.
 
+\begin{theorem}[Polyak]\label{thm:polyak}
+Assume $f$ is $L$-smooth and $\mu$-strongly convex, and $\nabla f(x_k) \neq \nabla f(x^*)$.
+Then one step of GD with Polyak stepsize $\gamma_k$ satisfies
+\[
+\norm{x_{k+1}-x^*}^2 \leq (1-\gamma_k\mu)\norm{x_k-x^*}^2.
+\]
 \end{theorem}
 
-Indeed, let us start from the GD step $x_{k+1} = x_k - \gamma_k\nabla f(x_k)$.
+\begin{proof}[Proof of Theorem~\ref{thm:polyak}]
+Let us start from the GD step $x_{k+1} = x_k - \gamma_k\nabla f(x_k)$.
 Since $\nabla f(x^*) = 0$, we can subtract the zero term $\gamma_k\nabla f(x^*)$
 without changing anything, and then group the terms:
 \begin{align*}
@@ -180,9 +183,7 @@ $-\mu\norm{x_k - x^*}^2$ remains, and therefore
 \norm{x_{k+1}-x^*}^2 \leq \norm{x_k - x^*}^2 - \gamma_k\mu\norm{x_k - x^*}^2
 = (1-\gamma_k\mu)\norm{x_k - x^*}^2,
 \]
-which is exactly the inequality in (iii).
-\begin{proof}
-    
+which proves the theorem.
 \end{proof}
 
 \end{document}
