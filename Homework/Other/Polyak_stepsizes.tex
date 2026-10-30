@@ -6,6 +6,7 @@
 \usepackage{float}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
@@ -14,6 +15,7 @@
 \newcommand{\norm}[1]{\left\| #1 \right\|}
 \newcommand{\inner}[2]{\left\langle #1, #2 \right\rangle}
 \DeclareMathOperator*{\argmin}{arg\,min}
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
 
 \title{Different methods for gradient descent stepsize choice}
 \author{}
@@ -23,33 +25,48 @@
 
 \maketitle
 
-Let us assume that we are given a function $f\colon \R^d \to \R$ which is $L$-smooth,
-$\mu$-strongly convex, and twice continuously differentiable, i.e., $f \in C^2(\R^d)$.
-As a reminder, Gradient Descent (GD) is an iterative method for finding the minimum
-of a function, and it can be described as follows.
+\section{Polyak stepsize for gradient descent}\label{sec:polyak}
+
+\subsection{Introduction}\label{sec:intro}
+
+The Polyak stepsize is a method for choosing the stepsize for gradient descent (GD).
+It is an adaptive method for doing so, which means that it allows the algorithm
+to choose a different stepsize after each step instead of fixing one for the whole process.
+In the following sections we will look at it in more detail (see Section~\ref{sec:polyak-rule}).
+
+\subsection{Reminder: gradient descent}\label{sec:gd}
+
+But first of all, let us recall what GD is. It is an
+iterative method for finding the minimum of a function.
+To describe it, let us assume that we are given a function $f\colon \R^d \to \R$ and it is $L$-smooth,
+$\mu$-strongly convex, and twice continuously differentiable, i.e., $f \in C^2(\R^d)$\footnote{From
+Algorithm~\ref{alg:gd} it is convenient that only the differentiability of the function is enough, but
+for further discussion it is necessary to make stronger assumptions, so we do it here.}.
+Then GD can be described as follows.
 
 \begin{algorithm}[H]
-\caption{GD}
+\caption{GD}\label{alg:gd}
 \begin{algorithmic}[1]
 \State \textbf{Parameters:} stepsize $\gamma > 0$, starting point $x_0 \in \R^d$
 \For{$k = 0, 1, 2, \dots$}
   \State Set $g_k = \nabla f(x_k)$
-  \State $x_{k+1} = x_k - \gamma \nabla f(x_k)$
+  \State $x_{k+1} = x_k - \gamma g_k$
 \EndFor
 \end{algorithmic}
 \end{algorithm}
 
+\subsection{GD with a constant stepsize}\label{sec:constant}
 Our aim is to choose the stepsize $\gamma$ so that GD converges ``faster''.
 The connection between the stepsize and the convergence speed can be described by the following lemma.
 
 \begin{lemma}\label{lem:one-step}
-Assume $f$ is $L$-smooth and $\mu$-strongly convex. Then the iterates of GD satisfy
+Assume $f$ is differentiable, $L$-smooth and $\mu$-strongly convex. Then the iterates of GD (Algorithm~\ref{alg:gd}) satisfy
 the following inequality for all $\gamma \geq 0$ and all $k \geq 0$:
 \begin{equation}\label{eq:lemma}
 \norm{x_{k+1}-x^*}^2 \leq (1-\gamma\mu)\norm{x_k-x^*}^2 - 2\gamma (1 - \gamma L)\, D_f(x_k, x^*),
 \end{equation}
 where $x^* \overset{\text{def}}{=} \argmin\limits_{x\in\R^d} f(x)$ and $D_f(x,y)$ is the Bregman
-divergence, defined as follows
+divergence, defined as follows:
 \[
 D_f(x, y) \overset{\text{def}}{=} f(x) - f(y) - \inner{\nabla f(y)}{x - y}
 \qquad \forall x, y \in \R^d.
@@ -67,15 +84,15 @@ $\mu$-strongly convex function.
 &= \norm{x_k - x^*}^2 + \gamma^2\norm{\nabla f(x_k) -\nabla f(x^*)}^2
    - 2\gamma\inner{x_k - x^*}{\nabla f(x_k) -\nabla f(x^*)}.
 \end{align*}
-From strong convexity we obtain
+From $\mu$-strong convexity we obtain
 \[
 \inner{x_k - x^*}{\nabla f(x_k) -\nabla f(x^*)} \geq D_f(x_k,x^*) + \frac{\mu}{2}\norm{x_k - x^*}^2.
 \]
-Also, from $L$-smoothness we have
+And from $L$-smoothness we have
 \[
 \norm{\nabla f(x_k) -\nabla f(x^*)}^2 \leq 2L\, D_f(x_k,x^*),
 \]
-and, as a result,
+and as a result,
 \[
 \norm{x_{k+1}-x^*}^2 \leq (1-\gamma\mu)\norm{x_k-x^*}^2 - 2\gamma (1 - \gamma L)\, D_f(x_k, x^*),
 \]
@@ -87,7 +104,7 @@ then $1 - \gamma L \geq 0$ and the last term in \eqref{eq:lemma} is non-positive
 Dropping it and applying \eqref{eq:lemma} $k$ times, we obtain the following theorem.
 
 \begin{theorem}[Convergence of GD]\label{thm:gd}
-Assume $f$ is $L$-smooth and $\mu$-strongly convex. Then the iterates of GD
+Assume that the differentiable function $f$ is $L$-smooth and $\mu$-strongly convex. Then the iterates of GD
 with stepsize $0 \leq \gamma \leq 1/L$ satisfy
 \begin{equation}\label{eq:gd-rate}
 \norm{x_k-x^*}^2 \leq (1-\gamma\mu)^k\norm{x_0-x^*}^2.
@@ -105,32 +122,30 @@ we have
 \[
 \norm{x_k-x^*}^2 \leq \varepsilon\norm{x_0-x^*}^2.
 \]
-\qed
-\\
 
-What we can conclude is that if the function is $L$-smooth and
-$\mu$-strongly convex, then we can choose some $0 \leq \gamma \leq 1/L$ in \textbf{advance}
-for all iterations of GD, and we can guarantee that after a certain number of steps
+What we can conclude from Theorem~\ref{thm:gd} is that if the function is $L$-smooth and
+$\mu$-strongly convex, then we can choose some positive $\gamma \leq 1/L$ in \textbf{advance}
+for all iterations of GD, and we will be able to guarantee that after a certain number of steps
 the squared distance between the current point and the minimizer is reduced by a factor
 of $\frac{1}{\varepsilon}$ compared to the initial point.
 
-\subsection{Polyak stepsizes}
+\subsection{Adaptive stepsizes: the Polyak rule}\label{sec:polyak-rule}
 
-But what if we are allowed to change the stepsize during the algorithm,
-that is, to pick a new stepsize $\gamma_k$ at each step $k$?
+But let us now assume that we are allowed to change the stepsize during the algorithm,
+and pick a new stepsize $\gamma_k$ at each step $k$.
 If we are willing to do this ``extra'' work, and of course if we are able to do it,
-can we find stepsizes $\gamma_k$ that are better than a constant one? Or at least not worse, in the sense of the $\varepsilon$-guarantee
-from the previous part?
+we would like to find stepsizes $\gamma_k$ that are better than a constant one, or at least not worse,
+in the sense of the $\varepsilon$-guarantee from the previous part (Section~\ref{sec:constant}).
 
-It turns out that the answer is yes, and one such method is called the Polyak stepsize.
+It turns out that this is possible, and one such method is called the Polyak stepsize.
 
-Consider a variant of GD with Polyak stepsize, i.e., with the adaptive (i.e.,
-iteration-dependent) stepsize rule
-\[
+Consider a variant of GD (Algorithm~\ref{alg:gd}) with the Polyak stepsize, i.e., with the adaptive
+(iteration-dependent) stepsize rule
+\begin{equation}\label{eq:polyak}
 \gamma_k = \frac{2D_f(x_k,x^*)}{\norm{\nabla f(x_k) - \nabla f(x^*)}^2},
-\]
+\end{equation}
 where we assume that $\nabla f(x_k) \neq \nabla f(x^*)$. This is a very natural assumption:
-since $\nabla f(x^*) = 0$ and the minimizer of a strongly convex function is unique, so
+since $\nabla f(x^*) = 0$ and the minimizer of a strongly convex function is unique,
 $\nabla f(x_k) = \nabla f(x^*)$ would mean that $x_k = x^*$, i.e., we have already found the minimum.
 
 \begin{enumerate}
@@ -144,7 +159,7 @@ Finally, the Polyak stepsize gives the following one-step guarantee.
 
 \begin{theorem}[Polyak]\label{thm:polyak}
 Assume $f$ is $L$-smooth and $\mu$-strongly convex, and $\nabla f(x_k) \neq \nabla f(x^*)$.
-Then one step of GD with Polyak stepsize $\gamma_k$ satisfies
+Then one step of GD with the Polyak stepsize $\gamma_k$ from \eqref{eq:polyak} satisfies
 \[
 \norm{x_{k+1}-x^*}^2 \leq (1-\gamma_k\mu)\norm{x_k-x^*}^2.
 \]
@@ -165,16 +180,18 @@ Expanding the square and taking $\gamma_k$ out of the last two terms, we obtain
 &= \norm{x_k - x^*}^2 + \gamma_k\Bigl(\gamma_k\norm{\nabla f(x_k) -\nabla f(x^*)}^2
    - 2\inner{x_k - x^*}{\nabla f(x_k) -\nabla f(x^*)}\Bigr).
 \end{align*}
-Now we bound the inner product from below. By $\mu$-strong convexity,
+Now we bound the inner product from below using $\mu$-strong convexity.
 \[
 \inner{x_k - x^*}{\nabla f(x_k) -\nabla f(x^*)} \geq D_f(x_k,x^*) + \frac{\mu}{2}\norm{x_k - x^*}^2.
 \]
 The inner product enters with a minus sign and $\gamma_k \geq 0$, so replacing it by this
 lower bound can only increase the right-hand side. Moreover, in front of the squared gradient
-norm we substitute the definition of $\gamma_k$. This gives
+norm we substitute the definition \eqref{eq:polyak} of $\gamma_k$. This gives
 \begin{align*}
-\norm{x_{k+1}-x^*}^2 \leq 
-\norm{x_k - x^*}^2 + \gamma_k\Biggl(\frac{2D_f(x_k,x^*)}{\norm{\nabla f(x_k) -\nabla f(x^*)}^2} \cdot\norm{\nabla f(x_k) -\nabla f(x^*)}^2 - 2D_f(x_k,x^*) - \mu\norm{x_k - x^*}^2\Biggr).
+\norm{x_{k+1}-x^*}^2
+&\leq \norm{x_k - x^*}^2 + \gamma_k\Biggl(\frac{2D_f(x_k,x^*)}{\norm{\nabla f(x_k) -\nabla f(x^*)}^2}
+   \cdot\norm{\nabla f(x_k) -\nabla f(x^*)}^2 \\
+&\qquad - 2D_f(x_k,x^*) - \mu\norm{x_k - x^*}^2\Biggr).
 \end{align*}
 Here the squared gradient norms cancel, so the first term in the brackets is just
 $2D_f(x_k,x^*)$, and it cancels with $-2D_f(x_k,x^*)$. Only the term
