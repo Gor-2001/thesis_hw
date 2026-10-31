@@ -1,0 +1,216 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+\newcommand{\ip}[2]{\left\langle #1, #2 \right\rangle}
+\newcommand{\xs}{x^\star}
+
+\title{Homework 00.11.26 -- Exercises 31--37}
+\author{Gor Melkumyan}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Exercise 31 (Decomposition of Bregman divergence)}
+
+Let $f = \frac{1}{n}\sum_{i=1}^n f_i$. Prove that
+\[
+  D_f(x,y) = \frac{1}{n}\sum_{i=1}^n D_{f_i}(x,y).
+\]
+
+\subsection*{Proof}
+\begin{align*}
+  D_f(x,y)
+  &= f(x) - f(y) - \ip{\nabla f(y)}{x-y}
+   = \frac{1}{n}\sum_{i=1}^n f_i(x) - \frac{1}{n}\sum_{i=1}^n f_i(y)
+     - \ip{\frac{1}{n}\sum_{i=1}^n \nabla f_i(y)}{x-y} \\
+  &= \frac{1}{n}\sum_{i=1}^n \underbrace{\bigl(f_i(x) - f_i(y) - \ip{\nabla f_i(y)}{x-y}\bigr)}_{D_{f_i}(x,y)}
+   = \frac{1}{n}\sum_{i=1}^n D_{f_i}(x,y).
+\end{align*}
+
+\section*{Exercise 32 (Theorem 38)}
+
+Assume that
+\begin{enumerate}
+  \item $f$ is $\mu$-convex;
+  \item Each $f_i$ is convex and $L_i$-smooth.
+\end{enumerate}
+Then SGD-NS with stepsize $0 < \gamma \le \frac{1}{2A''}$, where
+$A'' = \max_i \frac{L_i}{np_i}$, satisfies
+\[
+  \E\bigl[\norm{x^k - \xs}^2\bigr] \le (1-\gamma\mu)^k\norm{x^0 - \xs}^2 + \frac{2\gamma\sigma_\star^2}{\mu},
+\]
+where
+\[
+  \sigma_\star^2 = \mathrm{Var}\bigl[g(\xs)\bigr]
+  = \E\bigl[\norm{g(\xs)}^2\bigr] - \norm{\E\bigl[g(\xs)\bigr]}^2
+  = \left(\frac{1}{n^2}\sum_{i=1}^n \frac{\norm{\nabla f_i(\xs)}^2}{p_i}\right) - \norm{\nabla f(\xs)}^2 .
+\]
+
+\subsection*{Proof}
+From Lemma 37 using convexity and $L_i$-smoothness of $f_i$ we have that
+\[
+  \E\bigl[\norm{g(x) - g(y)}^2\bigr] \le 2A''\,D_f(x,y), \qquad \text{where } A'' = \max_i \frac{L_i}{np_i}.
+\]
+Moreover,
+\[
+  G(x,y) \le 4A''\,D_f(x,y) + 2\,\mathrm{Var}\bigl[g(y)\bigr] \qquad \forall x, y \in \R^d,
+\]
+Furthermore, using Theorem 33, which says that if $f$ is $\mu$-convex, $g^k$ is unbiased and the AC
+assumption is satisfied, then choosing some $0 < \gamma \le \frac{1}{A}$ we will have
+\[
+  \E\bigl[\norm{x^k - \xs}^2\bigr] \le (1-\gamma\mu)^k\norm{x^0 - \xs}^2 + \frac{\gamma C}{\mu}.
+\]
+In other words, Lemma 37 guarantees that the AC assumption is satisfied with
+\[
+  A = 2A'' = 2\max_i \frac{L_i}{np_i} \qquad \text{and} \qquad C = 2\,\mathrm{Var}\bigl[g(\xs)\bigr] = 2\sigma_\star^2,
+\]
+which can be used in Theorem 33, and after that $\gamma$ can be chosen as
+$0 < \gamma \le \frac{1}{A} = \frac{1}{2A''}$ to get
+\[
+  \E\bigl[\norm{x^k - \xs}^2\bigr] \le (1-\gamma\mu)^k\norm{x^0 - \xs}^2 + \frac{2\gamma\sigma_\star^2}{\mu}.
+\]
+
+\section*{Exercise 33}
+
+Prove that
+\[
+  \sigma_\star^2 = \E\bigl[\norm{g(\xs) - \nabla f(\xs)}^2\bigr] = 0
+  \text{iff} \nabla f_i(\xs) = np_i\nabla f(\xs) \quad \forall i = 1,\dots,n.
+\]
+
+\subsection*{Proof}
+\paragraph{1)}
+\begin{align*}
+  \left(\frac{1}{n^2}\sum_{i=1}^n \frac{\norm{\nabla f_i(\xs)}^2}{p_i}\right) - \norm{\nabla f(\xs)}^2
+  &= \left(\frac{1}{n^2}\sum_{i=1}^n \frac{\norm{np_i\nabla f(\xs)}^2}{p_i}\right) - \norm{\nabla f(\xs)}^2 \\
+  &= \Biggl(\underbrace{\sum_{i=1}^n p_i}_{1}\Biggr)\norm{\nabla f(\xs)}^2 - \norm{\nabla f(\xs)}^2 = 0
+  \;\Rightarrow\; \sigma_\star^2 = 0 .
+\end{align*}
+
+\paragraph{2)}
+$\sigma_\star^2 = 0$. Let's assume that there are $p_i' > 0$ such that $\sum_i p_i' = 1$ and
+$\nabla f_i(\xs) = np_i'\nabla f(\xs)$. Then
+\[
+  \sigma_\star^2 = \norm{\nabla f(\xs)}^2\left(\frac{1}{n^2}\sum_{i=1}^n \frac{(p_i'n)^2}{p_i} - 1\right) = 0
+  \iff \sum_{i=1}^n \frac{p_i'^2}{p_i} = 1 .
+\]
+One such solution for $p_i'$ is $p_i' = p_i$. It also turns out that it is the only solution:
+just use Exercise 38 with $a_i := p_i'^2$ and $p_i := p_i$.
+
+\section*{Exercise 34}
+
+Prove part (iii) of Lemma 44.
+
+\paragraph{Lemma 44.}
+Let $f_1,\dots,f_n : \R^d \to \R$ be differentiable and $f(x) := \frac{1}{n}\sum_{i=1}^n f_i(x)$.
+\begin{enumerate}
+  \item[(i)] If $f_i$ are $L_i$-smooth, then $f$ is $L$-smooth with $L \le \frac{1}{n}\sum_{i=1}^n L_i$.
+  \item[(ii)] If $f$ is $L$-smooth and $f_i$ are convex, then $f_i$ is $L_i$-smooth with $L_i \le nL$.
+  \item[(iii)] If $f$ is $L'$-smooth and $f_i$ are convex and $L_i'$-smooth, then there exist
+    $L \le L'$ and $L_i \le L_i'$ $\forall i$ such that $f$ is $L$-smooth, $f_i$ is $L_i$-smooth
+    $\forall i$, and $L \le \max_i L_i \le nL$.
+\end{enumerate}
+
+\subsection*{Proof of (iii)}
+Let's take
+\[
+  L = \min\Bigl(L',\ \inf\bigl\{L^* \in \R^+ : f \text{ is } L^*\text{-smooth}\bigr\}\Bigr)
+\]
+and
+\[
+  L_i = \min\Bigl(L_i',\ \inf\bigl\{L_i^* \in \R^+ : f_i \text{ is } L_i^*\text{-smooth}\bigr\}\Bigr).
+\]
+In that case $f$ is $L$-smooth, $f_i$ is $L_i$-smooth, and $L_i \le L_i'$, $L \le L'$.
+
+Now using (i) we get that $f$ is $L''$-smooth and $L'' \le \frac{1}{n}\sum_i L_i$, but because of
+$L \le L''$ we get that
+\[
+  L \le \frac{1}{n}\sum_{i=1}^n L_i \le \max_i L_i .
+\]
+Now using (ii) we get that $f_i$ is $L_i''$-smooth and $L_i'' \le nL$, but because of
+$L_i \le L_i''$ we get that $L_i \le nL$, so $\max_i L_i \le nL$, which proves Lemma 44 (iii):
+\[
+  L \le \frac{1}{n}\sum_{i=1}^n L_i \le \max_i L_i \qquad \text{and} \qquad \max_i L_i \le nL .
+\]
+
+\section*{Exercise 35}
+
+Give an example of $L_i$-smooth functions $f_i$ for which
+$\frac{1}{n}\sum_i L_i \ll \max_i L_i$.
+
+\bigskip
+Let $n = 1000$ and
+\[
+  f_1 = 500x^2, \qquad f_2 = x^2, \qquad f_i = \tfrac{1}{2}x^2 \quad \forall i = 3,\dots,n,
+\]
+so that $L_1 = 1000$, $L_2 = 2$ and $L_i = 1$ for $i \ge 3$. In this case
+\[
+  \frac{1}{n}\sum_{i=1}^n L_i = \frac{1}{1000}\cdot\Bigl(1000 + 2 + \sum_{i=3}^{1000} 1\Bigr)
+  = \frac{2000}{1000} = 2
+\]
+and $\max_i L_i = 1000$, so we have
+\[
+  \max_i L_i = 1000 \gg 2 = \frac{1}{n}\sum_{i=1}^n L_i .
+\]
+
+\section*{Exercise 36}
+
+Let $a_1,\dots,a_n > 0$. Prove that the solution to the optimization problem
+\[
+  D_{\Delta_n} := \min_{p \in \Delta_n} \max_i \frac{a_i}{p_i}
+\]
+is given by $p_i = \frac{a_i}{\sum_j a_j}$ for all $i = 1,\dots,n$.
+
+\subsection*{Proof}
+First of all, note that for $p_i = \frac{a_i}{\sum_j a_j}$ we have
+\[
+  D := \max_i \frac{a_i}{p_i} = \max_i \Bigl(\sum_j a_j\Bigr) = \sum_j a_j ,
+\]
+i.e.\ all the ratios $\frac{a_i}{p_i}$ are equal to the same number $\sum_j a_j$.
+
+Let's take another $p' \in \Delta_n$ and calculate $D' = \max_i \frac{a_i}{p_i'}$. If $p' \ne p$,
+then there is an $i$ with $p_i' \ne p_i$. Since $\sum_i p_i' = \sum_i p_i = 1$, if $p_i' > p_i$
+then lets difine k = i and if $p_i' > p_i$
+then there is $j \neq i$ with $p_j' < p_j$ and we will define k = j. So in both cases there is a $k$ with $p_k' < p_k$,
+and in that case
+\[
+  D = \sum_j a_j = \frac{a_k}{p_k} < \frac{a_k}{p_k'} \le \max_i \frac{a_i}{p_i'} = D' .
+\]
+So for any $p' \ne p$ we have $D < D'$, which means that $p$ is the (unique) solution.
+
+\section*{Exercise 37 (Importance sampling 2 -- simple version)}
+
+Let $a, b > 0$. Prove that the solution to the optimization problem
+\[
+  \min_{0 < p < 1} \frac{a}{p} + \frac{b}{1-p}
+\]
+is given by $p = \frac{\sqrt{a}}{\sqrt{a} + \sqrt{b}}$.
+
+\subsection*{Proof}
+Let $\varphi(p) := \frac{a}{p} + \frac{b}{1-p}$ for $p \in (0,1)$. Then
+\[
+  \varphi'(p) = -\frac{a}{p^2} + \frac{b}{(1-p)^2}, \qquad
+  \varphi''(p) = \frac{2a}{p^3} + \frac{2b}{(1-p)^3} > 0 ,
+\]
+so $\varphi$ is strictly convex on $(0,1)$, and a point where $\varphi'$ equals $0$ is its unique
+minimiser. Equating the derivative to $0$ and using $p > 0$, $1-p > 0$ to take square roots, we get
+\[
+  \varphi'(p) = 0
+  \iff \frac{a}{p^2} = \frac{b}{(1-p)^2}
+  \iff \frac{\sqrt{a}}{p} = \frac{\sqrt{b}}{1-p}
+  \iff \sqrt{a}\,(1-p) = \sqrt{b}\,p
+  \iff p = \frac{\sqrt{a}}{\sqrt{a} + \sqrt{b}} .
+\]
+Since $a, b > 0$, this $p$ lies in $(0,1)$, so it is the solution. The optimal value is
+\[
+  \varphi\left(\frac{\sqrt{a}}{\sqrt{a} + \sqrt{b}}\right)
+  = \sqrt{a}\,\bigl(\sqrt{a} + \sqrt{b}\bigr) + \sqrt{b}\,\bigl(\sqrt{a} + \sqrt{b}\bigr)
+  = \bigl(\sqrt{a} + \sqrt{b}\bigr)^2 .
+\]
+
+\end{document}
