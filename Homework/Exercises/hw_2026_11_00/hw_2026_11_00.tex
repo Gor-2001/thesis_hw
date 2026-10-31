@@ -1,6 +1,6 @@
 \documentclass[11pt,a4paper]{article}
 \usepackage[margin=2.5cm]{geometry}
-\usepackage{amsmath,amssymb}
+\usepackage{amsmath,amssymb,amsthm}
 
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\E}{\mathbb{E}}
@@ -22,15 +22,25 @@ Let $f = \frac{1}{n}\sum_{i=1}^n f_i$. Prove that
   D_f(x,y) = \frac{1}{n}\sum_{i=1}^n D_{f_i}(x,y).
 \]
 
-\subsection*{Proof}
-\begin{align*}
+\begin{proof}
+We start from the definition of the Bregman divergence of $f$ and substitute
+$f = \frac{1}{n}\sum_{i=1}^n f_i$. Since the gradient is linear, we also have
+$\nabla f(y) = \frac{1}{n}\sum_{i=1}^n \nabla f_i(y)$, so
+\[
   D_f(x,y)
-  &= f(x) - f(y) - \ip{\nabla f(y)}{x-y}
-   = \frac{1}{n}\sum_{i=1}^n f_i(x) - \frac{1}{n}\sum_{i=1}^n f_i(y)
-     - \ip{\frac{1}{n}\sum_{i=1}^n \nabla f_i(y)}{x-y} \\
-  &= \frac{1}{n}\sum_{i=1}^n \underbrace{\bigl(f_i(x) - f_i(y) - \ip{\nabla f_i(y)}{x-y}\bigr)}_{D_{f_i}(x,y)}
-   = \frac{1}{n}\sum_{i=1}^n D_{f_i}(x,y).
-\end{align*}
+  = f(x) - f(y) - \ip{\nabla f(y)}{x-y}
+  = \frac{1}{n}\sum_{i=1}^n f_i(x) - \frac{1}{n}\sum_{i=1}^n f_i(y)
+    - \ip{\frac{1}{n}\sum_{i=1}^n \nabla f_i(y)}{x-y} .
+\]
+The inner product is linear in its first argument, so the last term is also an average over $i$.
+Collecting the terms with the same index $i$ under one sum, we see that each bracket is exactly
+the Bregman divergence of $f_i$:
+\[
+  D_f(x,y)
+  = \frac{1}{n}\sum_{i=1}^n \underbrace{\bigl(f_i(x) - f_i(y) - \ip{\nabla f_i(y)}{x-y}\bigr)}_{D_{f_i}(x,y)}
+  = \frac{1}{n}\sum_{i=1}^n D_{f_i}(x,y). \qedhere
+\]
+\end{proof}
 
 \section*{Exercise 32 (Theorem 38)}
 
@@ -51,29 +61,33 @@ where
   = \left(\frac{1}{n^2}\sum_{i=1}^n \frac{\norm{\nabla f_i(\xs)}^2}{p_i}\right) - \norm{\nabla f(\xs)}^2 .
 \]
 
-\subsection*{Proof}
+\begin{proof}
+The theorem is a consequence of Theorem 33 and Lemma 37, so the plan is to check that the
+assumptions of Theorem 33 hold for SGD-NS and to compute the constants $A$ and $C$.
+The function $f$ is $\mu$-convex by assumption, and the stochastic gradient
+$g(x) = \frac{\nabla f_i(x)}{np_i}$ of SGD-NS is unbiased, since
+$\E\bigl[g(x)\bigr] = \sum_{i=1}^n p_i \frac{\nabla f_i(x)}{np_i} = \nabla f(x)$.
+So it remains to check the AC assumption.
+
 From Lemma 37, using the convexity and $L_i$-smoothness of $f_i$, we have that
 \[
   \E\bigl[\norm{g(x) - g(y)}^2\bigr] \le 2A''\,D_f(x,y), \qquad \text{where } A'' = \max_i \frac{L_i}{np_i}.
 \]
-Moreover,
+Moreover, for $G(x,y) = \E\bigl[\norm{g(x) - \nabla f(y)}^2\bigr]$ we have
 \[
-  G(x,y) \le 4A''\,D_f(x,y) + 2\,\mathrm{Var}\bigl[g(y)\bigr] \qquad \forall x, y \in \R^d .
+  G(x,y) \le 4A''\,D_f(x,y) + 2\,\mathrm{Var}\bigl[g(y)\bigr] \qquad \forall x, y \in \R^d ,
 \]
-Furthermore, we use Theorem 33, which says that if $f$ is $\mu$-convex, $g^k$ is unbiased and the AC
-assumption is satisfied, then choosing some $0 < \gamma \le \frac{1}{A}$ we will have
+which for $x = x^k$ and $y = \xs$ is the AC assumption.
+
+So, substituting everything into Theorem 33, we get
 \[
-  \E\bigl[\norm{x^k - \xs}^2\bigr] \le (1-\gamma\mu)^k\norm{x^0 - \xs}^2 + \frac{\gamma C}{\mu}.
+  \E\bigl[\norm{x^k - \xs}^2\bigr] \le (1-\gamma\mu)^k\norm{x^0 - \xs}^2 + \frac{\gamma C}{\mu},
 \]
-In other words, Lemma 37 guarantees that the AC assumption is satisfied with
+where $0 < \gamma \le \frac{1}{A} = \frac{1}{2A''}$ with
 \[
-  A = 2A'' = 2\max_i \frac{L_i}{np_i} \qquad \text{and} \qquad C = 2\,\mathrm{Var}\bigl[g(\xs)\bigr] = 2\sigma_\star^2,
+  A = 2A'' = 2\max_i \frac{L_i}{np_i} \qquad \text{and} \qquad C = 2\,\mathrm{Var}\bigl[g(\xs)\bigr] = 2\sigma_\star^2 . \qedhere
 \]
-which can be used in Theorem 33, and after that $\gamma$ can be chosen as
-$0 < \gamma \le \frac{1}{A} = \frac{1}{2A''}$ to get
-\[
-  \E\bigl[\norm{x^k - \xs}^2\bigr] \le (1-\gamma\mu)^k\norm{x^0 - \xs}^2 + \frac{2\gamma\sigma_\star^2}{\mu}.
-\]
+\end{proof}
 
 \section*{Exercise 33}
 
@@ -83,8 +97,18 @@ Prove that
   \quad\text{iff}\quad \nabla f_i(\xs) = np_i\nabla f(\xs) \quad \forall i = 1,\dots,n.
 \]
 
-\subsection*{Proof}
-\paragraph{1)}
+\begin{proof}
+We use the formula for $\sigma_\star^2$ from Exercise 32,
+\[
+  \sigma_\star^2 = \left(\frac{1}{n^2}\sum_{i=1}^n \frac{\norm{\nabla f_i(\xs)}^2}{p_i}\right) - \norm{\nabla f(\xs)}^2 ,
+\]
+and prove the two directions separately.
+
+\medskip
+\noindent\textbf{1) ($\Leftarrow$)}
+Assume that $\nabla f_i(\xs) = np_i\nabla f(\xs)$ for all $i$. Substituting this into the formula,
+we get $\norm{np_i\nabla f(\xs)}^2/p_i = n^2p_i\norm{\nabla f(\xs)}^2$, so the factor $\frac{1}{n^2}$
+cancels, and since the $p_i$ sum up to one, the two terms are equal:
 \begin{align*}
   \left(\frac{1}{n^2}\sum_{i=1}^n \frac{\norm{\nabla f_i(\xs)}^2}{p_i}\right) - \norm{\nabla f(\xs)}^2
   &= \left(\frac{1}{n^2}\sum_{i=1}^n \frac{\norm{np_i\nabla f(\xs)}^2}{p_i}\right) - \norm{\nabla f(\xs)}^2 \\
@@ -92,15 +116,19 @@ Prove that
   \;\Rightarrow\; \sigma_\star^2 = 0 .
 \end{align*}
 
-\paragraph{2)}
+\medskip
+\noindent\textbf{2) ($\Rightarrow$)}
 Let $\sigma_\star^2 = 0$, and let's assume that there are $p_i' > 0$ such that $\sum_i p_i' = 1$ and
-$\nabla f_i(\xs) = np_i'\nabla f(\xs)$. Then
+$\nabla f_i(\xs) = np_i'\nabla f(\xs)$. If $\nabla f(\xs) = 0$, then $\nabla f_i(\xs) = 0 = np_i\nabla f(\xs)$
+and there is nothing to prove, so let $\nabla f(\xs) \neq 0$. Substituting $\nabla f_i(\xs)$ into the
+formula and taking $\norm{\nabla f(\xs)}^2$ out of the brackets, we get
 \[
   \sigma_\star^2 = \norm{\nabla f(\xs)}^2\left(\frac{1}{n^2}\sum_{i=1}^n \frac{(p_i'n)^2}{p_i} - 1\right) = 0
   \iff \sum_{i=1}^n \frac{p_i'^2}{p_i} = 1 .
 \]
 One such solution for $p_i'$ is $p_i' = p_i$. It also turns out that it is the only solution:
-just use Exercise 38 with $a_i := p_i'^2$ and $p_i := p_i$.
+indeed, using Exercise 38 with $a_i := p_i'^2$ and $p_i := p_i$, we get the result.
+\end{proof}
 
 \section*{Exercise 34}
 
@@ -116,8 +144,9 @@ Let $f_1,\dots,f_n : \R^d \to \R$ be differentiable and $f(x) := \frac{1}{n}\sum
     $\forall i$, and $L \le \max_i L_i \le nL$.
 \end{enumerate}
 
-\subsection*{Proof of (iii)}
-Let's take
+\begin{proof}[Proof of (iii)]
+The idea is to take the smallest smoothness constants of $f$ and $f_i$ and then to apply
+parts (i) and (ii) to them. Let's take
 \[
   L = \min\Bigl(L',\ \inf\bigl\{L^* \in \R^+ : f \text{ is } L^*\text{-smooth}\bigr\}\Bigr)
 \]
@@ -125,38 +154,42 @@ and
 \[
   L_i = \min\Bigl(L_i',\ \inf\bigl\{L_i^* \in \R^+ : f_i \text{ is } L_i^*\text{-smooth}\bigr\}\Bigr).
 \]
-In that case, $f$ is $L$-smooth, $f_i$ is $L_i$-smooth, and $L_i \le L_i'$, $L \le L'$.
-
-Now, using (i), we get that $f$ is $L''$-smooth and $L'' \le \frac{1}{n}\sum_i L_i$, but because
-$L \le L''$, we get that
+Now, using (i) for the $L_i$-smooth functions $f_i$, we get that $f$ is $L''$-smooth and
+$L'' \le \frac{1}{n}\sum_i L_i$, but because $L \le L''$ (recall that $L$ is the smallest smoothness
+constant of $f$), we get that
 \[
   L \le \frac{1}{n}\sum_{i=1}^n L_i \le \max_i L_i .
 \]
-Now, using (ii), we get that $f_i$ is $L_i''$-smooth and $L_i'' \le nL$, but because
-$L_i \le L_i''$, we get that $L_i \le nL$, so $\max_i L_i \le nL$, which proves Lemma 44 (iii):
+Now, using (ii) for the $L$-smooth function $f$ and the convex functions $f_i$, we get that $f_i$ is
+$L_i''$-smooth and $L_i'' \le nL$, but because $L_i \le L_i''$ (again, $L_i$ is the smallest smoothness
+constant of $f_i$), we get that $L_i \le nL$, so $\max_i L_i \le nL$, which proves Lemma 44 (iii):
 \[
-  L \le \frac{1}{n}\sum_{i=1}^n L_i \le \max_i L_i \qquad \text{and} \qquad \max_i L_i \le nL .
+  L \le \frac{1}{n}\sum_{i=1}^n L_i \le \max_i L_i \qquad \text{and} \qquad \max_i L_i \le nL . \qedhere
 \]
+\end{proof}
 
 \section*{Exercise 35}
 
 Give an example of $L_i$-smooth functions $f_i$ for which
 $\frac{1}{n}\sum_i L_i \ll \max_i L_i$.
 
-\bigskip
-Let $n = 1000$ and
+\begin{proof}[Solution]
+The idea is to make one function ``much less smooth'' than all the others: one large $L_1$ is enough to
+make $\max_i L_i$ large, while in the average it is divided by $n$. Let $n = 1000$ and
 \[
-  f_1 = 500x^2, \qquad f_2 = x^2, \qquad f_i = \tfrac{1}{2}x^2 \quad \forall i = 3,\dots,n,
+  f_1 = 500x^2, \qquad f_2 = x^2, \qquad f_i = \tfrac{1}{2}x^2 \quad \forall i = 3,\dots,n.
 \]
-so that $L_1 = 1000$, $L_2 = 2$ and $L_i = 1$ for $i \ge 3$. In this case
+A function $cx^2$ with $c > 0$ has the derivative $2cx$, which is $2c$-Lipschitz, so it is $2c$-smooth.
+Hence $L_1 = 1000$, $L_2 = 2$ and $L_i = 1$ for $i \ge 3$. In this case
 \[
   \frac{1}{n}\sum_{i=1}^n L_i = \frac{1}{1000}\cdot\Bigl(1000 + 2 + \sum_{i=3}^{1000} 1\Bigr)
   = \frac{2000}{1000} = 2
 \]
 and $\max_i L_i = 1000$, so we have
 \[
-  \max_i L_i = 1000 \gg 2 = \frac{1}{n}\sum_{i=1}^n L_i .
+  \max_i L_i = 1000 \gg 2 = \frac{1}{n}\sum_{i=1}^n L_i . \qedhere
 \]
+\end{proof}
 
 \section*{Exercise 36}
 
@@ -166,21 +199,27 @@ Let $a_1,\dots,a_n > 0$. Prove that the solution to the optimization problem
 \]
 is given by $p_i = \frac{a_i}{\sum_j a_j}$ for all $i = 1,\dots,n$.
 
-\subsection*{Proof}
-First of all, note that for $p_i = \frac{a_i}{\sum_j a_j}$ we have
-\[
-  D := \max_i \frac{a_i}{p_i} = \max_i \Bigl(\sum_j a_j\Bigr) = \sum_j a_j ,
-\]
-i.e.\ all the ratios $\frac{a_i}{p_i}$ are equal to the same number $\sum_j a_j$.
+\begin{proof}
+The proof consists of two steps: first we compute the value of the objective at $p^*$ (here it is a
+partition that is defined in the exercise), and then we show that any other $p' \in \Delta_n$ gives a
+strictly larger value. Note that $p^* \in \Delta_n$, since all $p_i^* > 0$ and $\sum_i p_i^* = 1$.
 
-Let's take another $p' \in \Delta_n$ and calculate $D' = \max_i \frac{a_i}{p_i'}$. If $p' \ne p$,
-then there is an $i$ with $p_i' \ne p_i$. If $p_i' < p_i$, then let's define $k = i$, and if
-$p_i' > p_i$, then, since $\sum_j p_j' = \sum_j p_j = 1$, there is $j \ne i$ with $p_j' < p_j$, and
-we will define $k = j$. So in both cases there is a $k$ with $p_k' < p_k$, and in that case
+First of all, note that for $p_i^* = \frac{a_i}{\sum_j a_j}$ we have
 \[
-  D = \sum_j a_j = \frac{a_k}{p_k} < \frac{a_k}{p_k'} \le \max_i \frac{a_i}{p_i'} = D' .
+  D := \max_i \frac{a_i}{p_i^*} = \max_i \Bigl(\sum_j a_j\Bigr) = \sum_j a_j ,
 \]
-So for any $p' \ne p$ we have $D < D'$, which means that $p$ is the (unique) solution.
+i.e.\ all the ratios $\frac{a_i}{p_i^*}$ are equal to the same number $\sum_j a_j$.
+
+Let's take another $p' \in \Delta_n$ and calculate $D' = \max_i \frac{a_i}{p_i'}$. If $p' \ne p^*$,
+then there is an $i$ with $p_i' \ne p_i^*$. If $p_i' < p_i^*$, then let's assign $k = i$, and if
+$p_i' > p_i^*$, then, since $\sum_j p_j' = \sum_j p_j^* = 1$, there is $j \ne i$ with $p_j' < p_j^*$, and
+we will assign $k = j$. So in both cases there is a $k$ with $p_k' < p_k^*$. Since $a_k > 0$ and
+$0 < p_k' < p_k^*$, decreasing the denominator increases the ratio, and we get
+\[
+  D = \sum_j a_j = \frac{a_k}{p_k^*} < \frac{a_k}{p_k'} \le \max_i \frac{a_i}{p_i'} = D' .
+\]
+So for any $p' \ne p^*$ we have $D < D'$, which means that $p^*$ is the (unique) solution.
+\end{proof}
 
 \section*{Exercise 37 (Importance sampling 2 -- simple version)}
 
@@ -190,7 +229,8 @@ Let $a, b > 0$. Prove that the solution to the optimization problem
 \]
 is given by $p = \frac{\sqrt{a}}{\sqrt{a} + \sqrt{b}}$.
 
-\subsection*{Proof}
+\begin{proof}
+We find the minimiser by looking at the first and second derivatives of the objective.
 Let $\varphi(p) := \frac{a}{p} + \frac{b}{1-p}$ for $p \in (0,1)$. Then
 \[
   \varphi'(p) = -\frac{a}{p^2} + \frac{b}{(1-p)^2}, \qquad
@@ -205,11 +245,13 @@ minimiser. Equating the derivative to $0$ and using $p > 0$, $1-p > 0$ to take s
   \iff \sqrt{a}\,(1-p) = \sqrt{b}\,p
   \iff p = \frac{\sqrt{a}}{\sqrt{a} + \sqrt{b}} .
 \]
-Since $a, b > 0$, this $p$ lies in $(0,1)$, so it is the solution. The optimal value is
+Since $a, b > 0$, this $p$ lies in $(0,1)$, so it is the solution. Using
+$1 - p = \frac{\sqrt{b}}{\sqrt{a} + \sqrt{b}}$, the optimal value is
 \[
   \varphi\left(\frac{\sqrt{a}}{\sqrt{a} + \sqrt{b}}\right)
   = \sqrt{a}\,\bigl(\sqrt{a} + \sqrt{b}\bigr) + \sqrt{b}\,\bigl(\sqrt{a} + \sqrt{b}\bigr)
-  = \bigl(\sqrt{a} + \sqrt{b}\bigr)^2 .
+  = \bigl(\sqrt{a} + \sqrt{b}\bigr)^2 . \qedhere
 \]
+\end{proof}
 
 \end{document}
