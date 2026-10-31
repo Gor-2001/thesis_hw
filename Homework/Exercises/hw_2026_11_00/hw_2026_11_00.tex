@@ -36,7 +36,7 @@ Let $f = \frac{1}{n}\sum_{i=1}^n f_i$. Prove that
 
 Assume that
 \begin{enumerate}
-  \item $f$ is $\mu$-convex;
+  \item $f$ is $\mu$-convex.
   \item Each $f_i$ is convex and $L_i$-smooth.
 \end{enumerate}
 Then SGD-NS with stepsize $0 < \gamma \le \frac{1}{2A''}$, where
@@ -52,15 +52,15 @@ where
 \]
 
 \subsection*{Proof}
-From Lemma 37 using convexity and $L_i$-smoothness of $f_i$ we have that
+From Lemma 37, using the convexity and $L_i$-smoothness of $f_i$, we have that
 \[
   \E\bigl[\norm{g(x) - g(y)}^2\bigr] \le 2A''\,D_f(x,y), \qquad \text{where } A'' = \max_i \frac{L_i}{np_i}.
 \]
 Moreover,
 \[
-  G(x,y) \le 4A''\,D_f(x,y) + 2\,\mathrm{Var}\bigl[g(y)\bigr] \qquad \forall x, y \in \R^d,
+  G(x,y) \le 4A''\,D_f(x,y) + 2\,\mathrm{Var}\bigl[g(y)\bigr] \qquad \forall x, y \in \R^d .
 \]
-Furthermore, using Theorem 33, which says that if $f$ is $\mu$-convex, $g^k$ is unbiased and the AC
+Furthermore, we use Theorem 33, which says that if $f$ is $\mu$-convex, $g^k$ is unbiased and the AC
 assumption is satisfied, then choosing some $0 < \gamma \le \frac{1}{A}$ we will have
 \[
   \E\bigl[\norm{x^k - \xs}^2\bigr] \le (1-\gamma\mu)^k\norm{x^0 - \xs}^2 + \frac{\gamma C}{\mu}.
@@ -80,7 +80,7 @@ $0 < \gamma \le \frac{1}{A} = \frac{1}{2A''}$ to get
 Prove that
 \[
   \sigma_\star^2 = \E\bigl[\norm{g(\xs) - \nabla f(\xs)}^2\bigr] = 0
-  \text{iff} \nabla f_i(\xs) = np_i\nabla f(\xs) \quad \forall i = 1,\dots,n.
+  \quad\text{iff}\quad \nabla f_i(\xs) = np_i\nabla f(\xs) \quad \forall i = 1,\dots,n.
 \]
 
 \subsection*{Proof}
@@ -93,7 +93,7 @@ Prove that
 \end{align*}
 
 \paragraph{2)}
-$\sigma_\star^2 = 0$. Let's assume that there are $p_i' > 0$ such that $\sum_i p_i' = 1$ and
+Let $\sigma_\star^2 = 0$, and let's assume that there are $p_i' > 0$ such that $\sum_i p_i' = 1$ and
 $\nabla f_i(\xs) = np_i'\nabla f(\xs)$. Then
 \[
   \sigma_\star^2 = \norm{\nabla f(\xs)}^2\left(\frac{1}{n^2}\sum_{i=1}^n \frac{(p_i'n)^2}{p_i} - 1\right) = 0
@@ -125,15 +125,15 @@ and
 \[
   L_i = \min\Bigl(L_i',\ \inf\bigl\{L_i^* \in \R^+ : f_i \text{ is } L_i^*\text{-smooth}\bigr\}\Bigr).
 \]
-In that case $f$ is $L$-smooth, $f_i$ is $L_i$-smooth, and $L_i \le L_i'$, $L \le L'$.
+In that case, $f$ is $L$-smooth, $f_i$ is $L_i$-smooth, and $L_i \le L_i'$, $L \le L'$.
 
-Now using (i) we get that $f$ is $L''$-smooth and $L'' \le \frac{1}{n}\sum_i L_i$, but because of
-$L \le L''$ we get that
+Now, using (i), we get that $f$ is $L''$-smooth and $L'' \le \frac{1}{n}\sum_i L_i$, but because
+$L \le L''$, we get that
 \[
   L \le \frac{1}{n}\sum_{i=1}^n L_i \le \max_i L_i .
 \]
-Now using (ii) we get that $f_i$ is $L_i''$-smooth and $L_i'' \le nL$, but because of
-$L_i \le L_i''$ we get that $L_i \le nL$, so $\max_i L_i \le nL$, which proves Lemma 44 (iii):
+Now, using (ii), we get that $f_i$ is $L_i''$-smooth and $L_i'' \le nL$, but because
+$L_i \le L_i''$, we get that $L_i \le nL$, so $\max_i L_i \le nL$, which proves Lemma 44 (iii):
 \[
   L \le \frac{1}{n}\sum_{i=1}^n L_i \le \max_i L_i \qquad \text{and} \qquad \max_i L_i \le nL .
 \]
@@ -174,10 +174,9 @@ First of all, note that for $p_i = \frac{a_i}{\sum_j a_j}$ we have
 i.e.\ all the ratios $\frac{a_i}{p_i}$ are equal to the same number $\sum_j a_j$.
 
 Let's take another $p' \in \Delta_n$ and calculate $D' = \max_i \frac{a_i}{p_i'}$. If $p' \ne p$,
-then there is an $i$ with $p_i' \ne p_i$. Since $\sum_i p_i' = \sum_i p_i = 1$, if $p_i' > p_i$
-then lets difine k = i and if $p_i' > p_i$
-then there is $j \neq i$ with $p_j' < p_j$ and we will define k = j. So in both cases there is a $k$ with $p_k' < p_k$,
-and in that case
+then there is an $i$ with $p_i' \ne p_i$. If $p_i' < p_i$, then let's define $k = i$, and if
+$p_i' > p_i$, then, since $\sum_j p_j' = \sum_j p_j = 1$, there is $j \ne i$ with $p_j' < p_j$, and
+we will define $k = j$. So in both cases there is a $k$ with $p_k' < p_k$, and in that case
 \[
   D = \sum_j a_j = \frac{a_k}{p_k} < \frac{a_k}{p_k'} \le \max_i \frac{a_i}{p_i'} = D' .
 \]
