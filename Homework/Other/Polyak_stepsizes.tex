@@ -1,5 +1,4 @@
 \documentclass[11pt]{article}
-
 \usepackage[utf8]{inputenc}
 \usepackage[margin=1in]{geometry}
 \usepackage{amsmath, amssymb, amsthm}
@@ -7,7 +6,7 @@
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
 \usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
-
+\newcommand{\avetik}[1]{{\color{red}#1}}
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
 
@@ -34,9 +33,10 @@ It is an adaptive method for doing so, which means that it allows the algorithm
 to choose a different stepsize after each step instead of fixing one for the whole process.
 In the following sections we will look at it in more detail (see Section~\ref{sec:polyak-rule}).
 
-\subsection{Reminder: gradient descent}\label{sec:gd}
 
-But first of all, let us recall what GD is. It is an
+\subsection{GD with a constant stepsize}\label{sec:constant}
+
+Let us first recall what GD is. It is an
 iterative method for finding the minimum of a function.
 To describe it, let us assume that we are given a function $f\colon \R^d \to \R$ and it is $L$-smooth,
 $\mu$-strongly convex, and twice continuously differentiable, i.e., $f \in C^2(\R^d)$\footnote{From
@@ -55,7 +55,6 @@ Then GD can be described as follows.
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{GD with a constant stepsize}\label{sec:constant}
 Our aim is to choose the stepsize $\gamma$ so that GD converges ``faster''.
 The connection between the stepsize and the convergence speed can be described by the following lemma.
 
@@ -131,7 +130,7 @@ of $\frac{1}{\varepsilon}$ compared to the initial point.
 
 \subsection{Adaptive stepsizes: the Polyak rule}\label{sec:polyak-rule}
 
-But let us now assume that we are allowed to change the stepsize during the algorithm,
+Let us now assume that we are allowed to change the stepsize during the algorithm,
 and pick a new stepsize $\gamma_k$ at each step $k$.
 If we are willing to do this ``extra'' work, and of course if we are able to do it,
 we would like to find stepsizes $\gamma_k$ that are better than a constant one, or at least not worse,
