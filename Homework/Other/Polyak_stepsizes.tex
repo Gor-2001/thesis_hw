@@ -149,10 +149,12 @@ since $\nabla f(x^*) = 0$ and the minimizer of a strongly convex function is uni
 $\nabla f(x_k) = \nabla f(x^*)$ would mean that $x_k = x^*$, i.e., we have already found the minimum.
 
 \begin{enumerate}
-  \item[(i)] From $L$-smoothness it can be obtained that $\gamma_k \geq 1/L$. That is,
+  \renewcommand{\theenumi}{(\roman{enumi})}
+  \renewcommand{\labelenumi}{\theenumi}
+  \item\label{it:lower} From $L$-smoothness it can be obtained that $\gamma_k \geq 1/L$. That is,
   the Polyak stepsize is always at least as large as the largest constant stepsize
   $\gamma = 1/L$ allowed by Theorem~\ref{thm:gd}.
-  \item[(ii)] From $\mu$-strong convexity it can be obtained that $\gamma_k \leq 1/\mu$.
+  \item\label{it:upper} From $\mu$-strong convexity it can be obtained that $\gamma_k \leq 1/\mu$.
 \end{enumerate}
 
 Finally, the Polyak stepsize gives the following one-step guarantee.
@@ -236,8 +238,8 @@ $0 < \gamma \leq 1/L$ be any constant stepsize allowed by Theorem~\ref{thm:gd}. 
 \end{corollary}
 
 \begin{proof}[Proof of Corollary~\ref{cor:gd-vs-polyak}]
-We compare the factors one by one. By (ii), $\gamma_i \leq 1/\mu$, so $1-\gamma_i\mu \geq 0$.
-By (i), $\gamma_i \geq 1/L \geq \gamma$, so $1-\gamma_i\mu \leq 1-\gamma\mu$. Hence, for every $i$,
+We compare the factors one by one. By~\ref{it:upper}, $\gamma_i \leq 1/\mu$, so $1-\gamma_i\mu \geq 0$.
+By~\ref{it:lower}, $\gamma_i \geq 1/L \geq \gamma$, so $1-\gamma_i\mu \leq 1-\gamma\mu$. Hence, for every $i$,
 \[
 0 \leq 1-\gamma_i\mu \leq 1-\gamma\mu.
 \]
