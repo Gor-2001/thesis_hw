@@ -51,6 +51,18 @@ together with the comparison with the simple GD.
   \includegraphics[width=\textwidth]{figures/lin_exp2_polyak.png}
 \end{center}
 
+The Polyak stepsizes on the right plot jump between two values. The toy example
+$f(x) = \frac{1}{2}(a_1 x_1^2 + a_2 x_2^2)$ with $a_1 = 1$, $a_2 = 10$ shows why. One $\gamma_k$ can not be good for both
+directions at once: a large step helps in the flat direction $x_1$ but overshoots in the steep direction $x_2$, and the
+next, smaller step corrects it. So the path zig-zags and $\gamma_k$ ping-pongs. If one coordinate is already correct,
+e.g.\ $x_0 = (9, 0)$ or $x_0 = (0, 3)$, then $\gamma_0 = \frac{1}{a_1}$ or $\frac{1}{a_2}$ and the minimum is reached in
+one step. In more dimensions, e.g.\ with $a_1 = 1$, $a_2 = 4$, $a_3 = 10$ (last plot), the middle direction vanishes
+first, and again only the flattest and the steepest directions remain.
+
+\begin{center}
+  \includegraphics[width=\textwidth]{figures/lin_exp2_polyak_toy.png}
+\end{center}
+
 After them come SGD-US and SGD-IS with their theoretical maximal stepsizes $\frac{1}{A}$, and also some experiments
 with other stepsizes. They show how the stepsize changes the convergence speed and the size of the neighbourhood,
 and what happens when we take a much larger $\gamma$ than the theory allows.
