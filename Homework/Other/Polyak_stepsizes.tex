@@ -9,6 +9,7 @@
 \newcommand{\avetik}[1]{{\color{red}#1}}
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
 
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\norm}[1]{\left\| #1 \right\|}
@@ -114,9 +115,9 @@ To make this result more concrete,
 we may ask how many GD iterations it takes for the error to reach
 a certain target level $\varepsilon$. To answer this, one can start from inequality
 \eqref{eq:gd-rate} and show that with $\gamma = 1/L$, for every $k$ that satisfies
-\[
+\begin{equation}\label{eq:gd-iter}
 k \geq \frac{L}{\mu}\log\frac{1}{\varepsilon}
-\]
+\end{equation}
 we have
 \[
 \norm{x_k-x^*}^2 \leq \varepsilon\norm{x_0-x^*}^2.
@@ -201,5 +202,50 @@ $-\mu\norm{x_k - x^*}^2$ remains, and therefore
 \]
 which proves the theorem.
 \end{proof}
+
+Applying Theorem~\ref{thm:polyak} at every iteration, we obtain a guarantee for the whole
+run of Polyak GD.
+
+\begin{corollary}[Convergence of Polyak GD]\label{cor:polyak-conv}
+Let $f$ be $L$-smooth and $\mu$-strongly convex, and assume that $\nabla f(x_k) \neq \nabla f(x^*)$
+for all $k \geq 0$. Then the iterates of GD with the Polyak stepsize \eqref{eq:polyak} satisfy
+\[
+\norm{x_k-x^*}^2 \leq \prod_{i=0}^{k-1}(1-\gamma_i\mu)\,\norm{x_0-x^*}^2.
+\]
+\end{corollary}
+
+\begin{proof}[Proof of Corollary~\ref{cor:polyak-conv}]
+Theorem~\ref{thm:polyak} bounds the distance after one step by the distance before it.
+Applying it first to $x_k$, then to $x_{k-1}$, and so on down to $x_1$, we obtain
+\begin{align*}
+\norm{x_k-x^*}^2
+&\leq (1-\gamma_{k-1}\mu)\norm{x_{k-1}-x^*}^2
+ \leq (1-\gamma_{k-1}\mu)(1-\gamma_{k-2}\mu)\norm{x_{k-2}-x^*}^2 \\
+&\leq \dots \leq \prod_{i=0}^{k-1}(1-\gamma_i\mu)\,\norm{x_0-x^*}^2.
+\end{align*}
+\end{proof}
+
+It remains to compare this product with the rate $(1-\gamma\mu)^k$ of GD with a constant stepsize.
+
+\begin{corollary}[Polyak GD is not slower than GD]\label{cor:gd-vs-polyak}
+Let $\gamma_0, \dots, \gamma_{k-1}$ be the Polyak stepsizes from \eqref{eq:polyak}, and let
+$0 < \gamma \leq 1/L$ be any constant stepsize allowed by Theorem~\ref{thm:gd}. Then
+\[
+\prod_{i=0}^{k-1}(1-\gamma_i\mu) \leq (1-\gamma\mu)^k.
+\]
+\end{corollary}
+
+\begin{proof}[Proof of Corollary~\ref{cor:gd-vs-polyak}]
+We compare the factors one by one. By (ii), $\gamma_i \leq 1/\mu$, so $1-\gamma_i\mu \geq 0$.
+By (i), $\gamma_i \geq 1/L \geq \gamma$, so $1-\gamma_i\mu \leq 1-\gamma\mu$. Hence, for every $i$,
+\[
+0 \leq 1-\gamma_i\mu \leq 1-\gamma\mu.
+\]
+Since all the factors are non-negative, multiplying these $k$ inequalities gives the first claim.
+\end{proof}
+
+As a consequence, the iteration bound \eqref{eq:gd-iter} obtained for GD with $\gamma = 1/L$
+holds for Polyak GD as well: Polyak stepsizes are at least as good as the best constant stepsize
+allowed by Theorem~\ref{thm:gd}.
 
 \end{document}
