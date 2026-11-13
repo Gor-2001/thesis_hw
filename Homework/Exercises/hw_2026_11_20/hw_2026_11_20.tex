@@ -5,8 +5,13 @@
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\E}{\mathbb{E}}
 \newcommand{\Prob}{\mathbb{P}}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+\newcommand{\xs}{x^\star}
+\newcommand{\Var}{\mathrm{Var}}
 
-\title{Homework 20.11.26 -- Exercise 40}
+\newtheorem*{theorem}{Theorem}
+
+\title{Homework 20.11.26}
 \author{Gor Melkumyan}
 \date{}
 
@@ -41,6 +46,129 @@ $n! = n\,(n-1)!$ and $\tau! = \tau\,(\tau-1)!$ we get
   = \frac{(n-1)!}{n!}\cdot\frac{\tau!}{(\tau-1)!}
   = \frac{\tau}{n} . \qedhere
 \]
+\end{proof}
+
+\section*{Convergence of SGD-NICE}
+
+\subsection*{Setting and notation}
+
+Let $f = \frac{1}{n}\sum_{i=1}^n f_i$ with $n \ge 2$, and fix a minibatch size $\tau \in \{1,2,\dots,n\}$.
+Let
+\[
+  n' := \binom{n}{\tau}
+  \qquad\text{and}\qquad
+  \mathcal{S} := \bigl\{\Delta \subseteq \{1,\dots,n\} \;:\; |\Delta| = \tau\bigr\} = \{\Delta_1,\dots,\Delta_{n'}\},
+\]
+i.e.\ $\mathcal{S}$ is the set of all $n'$ subsets of $\{1,\dots,n\}$ with $\tau$ elements.
+SGD-NICE is SGD with the gradient estimator
+\[
+  g(x) := \frac{1}{\tau}\sum_{i \in S} \nabla f_i(x),
+\]
+where $S$ is a $\tau$-nice sampling, i.e.\ $S$ is chosen uniformly from $\mathcal{S}$.
+We use the following constants:
+\[
+  A'' := \frac{n-\tau}{\tau(n-1)}\max_i L_i + \frac{n(\tau-1)}{\tau(n-1)}L ,
+\]
+\[
+  \Var\bigl[g(\xs)\bigr] = \frac{n-\tau}{\tau(n-1)}
+  \left(\frac{1}{n}\sum_{i=1}^n \norm{\nabla f_i(\xs)}^2 - \norm{\nabla f(\xs)}^2\right)
+  \quad \text{(formula (79) of Lemma 45)},
+\]
+\[
+  A := 2A'', \qquad C := 2\Var\bigl[g(\xs)\bigr].
+\]
+
+\subsection*{Statement}
+
+\begin{theorem}[Convergence of SGD-NICE]
+Assume that $f_i$ is convex and $L_i$-smooth for all $i$, and that $f$ is $\mu$-convex and $L$-smooth.
+Choose any relative error tolerance $0 < \delta < 1$ and the stepsize
+\[
+  \gamma = \min\left\{\frac{1}{A},\ \frac{\mu\delta\norm{x^0 - \xs}^2}{C}\right\}
+  = \min\left\{\frac{1}{2A''},\ \frac{\mu\delta\norm{x^0 - \xs}^2}{2\Var\bigl[g(\xs)\bigr]}\right\}.
+\]
+Then the iterates of SGD-NICE satisfy
+\[
+  k \ge \max\left\{\frac{2A''}{\mu},\ \frac{2\Var\bigl[g(\xs)\bigr]}{\delta\mu^2\norm{x^0 - \xs}^2}\right\}\log\frac{1}{\delta}
+  \quad\Rightarrow\quad
+  \E\bigl[\norm{x^k - \xs}^2\bigr] \le 2\delta\norm{x^0 - \xs}^2 .
+\]
+Equivalently, for an absolute accuracy $\varepsilon := 2\delta\norm{x^0 - \xs}^2$ (i.e.\ $\delta = \frac{\varepsilon}{2\norm{x^0 - \xs}^2}$),
+\[
+  k \ge \max\left\{\frac{2A''}{\mu},\ \frac{4\Var\bigl[g(\xs)\bigr]}{\varepsilon\mu^2}\right\}\log\frac{2\norm{x^0 - \xs}^2}{\varepsilon}
+  \quad\Rightarrow\quad
+  \E\bigl[\norm{x^k - \xs}^2\bigr] \le \varepsilon .
+\]
+\end{theorem}
+
+\subsection*{Proof}
+
+\begin{proof}
+The idea is to use the methods from SGD without batches here in SGD with batches.
+The proof has three steps: we rewrite SGD-NICE as SGD-US, we apply Theorem 33, and we check the AC
+assumption.
+
+\medskip
+\noindent\textbf{1) SGD-NICE as SGD-US.}
+For every $i \in \{1,\dots,n'\}$ define
+\[
+  f_i^*(x) := \frac{1}{\tau}\sum_{j \in \Delta_i} f_j(x).
+\]
+It is easy to notice that
+\[
+  f(x) = \frac{1}{n}\sum_{j=1}^n f_j(x) = \frac{1}{n'}\sum_{i=1}^{n'} f_i^*(x),
+\]
+since, as in Exercise 40, every $f_j$ appears in exactly $\binom{n-1}{\tau-1} = \frac{\tau}{n}n'$ of the
+functions $f_i^*$, so its total weight on the right is $\frac{1}{n'}\cdot\frac{1}{\tau}\cdot\frac{\tau}{n}n' = \frac{1}{n}$.
+Also it is easy to notice that the estimator of SGD-NICE can be also defined as in SGD-US:
+\[
+  g(x) = \nabla f_i^*(x), \qquad i \text{ chosen uniformly from } \{1,\dots,n'\}.
+\]
+So we have $n'$ functions $f_i^*$ with $f = \frac{1}{n'}\sum_{i=1}^{n'} f_i^*$ and $g(x) = \nabla f_i^*(x)$ for a
+uniformly chosen $i$, which is exactly the setup of SGD-US. In particular, $g$ is unbiased:
+$\E\bigl[g(x)\bigr] = \frac{1}{n'}\sum_{i=1}^{n'}\nabla f_i^*(x) = \nabla f(x)$.
+
+\medskip
+\noindent\textbf{2) Applying Theorem 33.}
+Since $f$ is $\mu$-convex and $g$ is unbiased, if the AC assumption holds with constants $A$ and $C$, then
+Theorem 33 says that for $0 < \gamma \le \frac{1}{A}$
+\[
+  \E\bigl[\norm{x^k - \xs}^2\bigr] \le (1-\gamma\mu)^k\norm{x^0 - \xs}^2 + \frac{\gamma C}{\mu},
+\]
+and from Commentary III of Theorem 33 we get
+\[
+  \E\bigl[\norm{x^k - \xs}^2\bigr] \le 2\delta\norm{x^0 - \xs}^2
+\]
+as long as
+\[
+  \gamma = \min\left\{\frac{1}{A},\ \frac{\mu\delta\norm{x^0 - \xs}^2}{C}\right\}
+  \qquad\text{and}\qquad k \ge \frac{1}{\gamma\mu}\log\frac{1}{\delta}.
+\]
+So if we show that $g$ satisfies the AC assumption with $A = 2A''$ and $C = 2\Var\bigl[g(\xs)\bigr]$, we get
+exactly the stepsize of the theorem and
+\[
+  \frac{1}{\gamma\mu} = \max\left\{\frac{A}{\mu},\ \frac{C}{\delta\mu^2\norm{x^0 - \xs}^2}\right\}
+  = \max\left\{\frac{2A''}{\mu},\ \frac{2\Var\bigl[g(\xs)\bigr]}{\delta\mu^2\norm{x^0 - \xs}^2}\right\},
+\]
+which is what we have to prove. Substituting $\delta = \frac{\varepsilon}{2\norm{x^0 - \xs}^2}$ gives the second form
+with $\varepsilon$.
+
+\medskip
+\noindent\textbf{3) The AC assumption.}
+It remains to prove that
+\[
+  G^k := \E\bigl[\norm{g^k - \nabla f(\xs)}^2 \,\big|\, x^k\bigr] \le 2A\,D_f(x^k,\xs) + C .
+\]
+For this, from Lemma 45 we have
+\[
+  \E\bigl[\norm{g(x) - g(y)}^2\bigr] \le 2A''\,D_f(x,y) .
+\]
+As a result, applying Theorem 36 (with $C''(y) = 0$), we get that
+\[
+  G(x,y) \le \underbrace{4A''}_{2A}\,D_f(x,y) + 2\Var\bigl[g(y)\bigr] .
+\]
+Taking $x = x^k$ and $y = \xs$, this is exactly the AC assumption with $A = 2A''$ and
+$C = 2\Var\bigl[g(\xs)\bigr]$, which finishes the proof.
 \end{proof}
 
 \end{document}
