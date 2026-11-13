@@ -1,0 +1,46 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prob}{\mathbb{P}}
+
+\title{Homework 20.11.26 -- Exercise 40}
+\author{Gor Melkumyan}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Exercise 40 ($\tau$-nice sampling)}
+
+Let $S \subseteq \{1,\dots,n\}$ be chosen uniformly at random among all subsets of size $\tau$,
+where $1 \le \tau \le n$. Prove that
+\[
+  p_i := \Prob(i \in S) = \frac{\tau}{n} \qquad \forall i = 1,\dots,n.
+\]
+
+\begin{proof}
+Since $S$ is chosen uniformly, $p_i$ is the number of size $\tau$ subsets that contain $i$ divided by
+the number of all size $\tau$ subsets. The number of all size $\tau$ subsets
+$S \subseteq \{1,\dots,n\}$ is
+\[
+  \binom{n}{\tau} = \frac{n!}{\tau!\,(n-\tau)!} .
+\]
+Now we compute how many of them contain $i$. Such a subset contains $i$ and $\tau-1$ other elements,
+which can be chosen arbitrarily from the remaining $n-1$ elements, so there are
+\[
+  \binom{n-1}{\tau-1} = \frac{(n-1)!}{(\tau-1)!\,(n-\tau)!}
+\]
+of them. Dividing this number by $\binom{n}{\tau}$, the factor $(n-\tau)!$ cancels, and using
+$n! = n\,(n-1)!$ and $\tau! = \tau\,(\tau-1)!$ we get
+\[
+  p_i = \frac{\binom{n-1}{\tau-1}}{\binom{n}{\tau}}
+  = \frac{(n-1)!}{(\tau-1)!\,(n-\tau)!}\cdot\frac{\tau!\,(n-\tau)!}{n!}
+  = \frac{(n-1)!}{n!}\cdot\frac{\tau!}{(\tau-1)!}
+  = \frac{\tau}{n} . \qedhere
+\]
+\end{proof}
+
+\end{document}
