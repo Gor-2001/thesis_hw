@@ -217,14 +217,14 @@ for all $k \geq 0$. Then the iterates of GD with the Polyak stepsize \eqref{eq:p
 \end{corollary}
 
 \begin{proof}[Proof of Corollary~\ref{cor:polyak-conv}]
-Theorem~\ref{thm:polyak} bounds the distance after one step by the distance before it.
-Applying it first to $x_k$, then to $x_{k-1}$, and so on down to $x_1$, we obtain
-\begin{align*}
-\norm{x_k-x^*}^2
-&\leq (1-\gamma_{k-1}\mu)\norm{x_{k-1}-x^*}^2
- \leq (1-\gamma_{k-1}\mu)(1-\gamma_{k-2}\mu)\norm{x_{k-2}-x^*}^2 \\
-&\leq \dots \leq \prod_{i=0}^{k-1}(1-\gamma_i\mu)\,\norm{x_0-x^*}^2.
-\end{align*}
+By Theorem~\ref{thm:polyak}, the squared distance to $x^*$ after one step is bounded by the squared distance before it:
+\[
+\norm{x_k - x^*}^2 \leq (1 - \gamma_{k-1}\mu)\norm{x_{k-1} - x^*}^2.
+\]
+Applying this bound recursively down to $x_0$ yields
+\[
+\norm{x_k - x^*}^2 \leq \prod_{i=0}^{k-1} (1 - \gamma_i\mu)\, \norm{x_0 - x^*}^2. \qedhere
+\]
 \end{proof}
 
 It remains to compare this product with the rate $(1-\gamma\mu)^k$ of GD with a constant stepsize.
